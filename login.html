@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Enter - A Universe For Chahat</title>
+    <style>
+        :root { --primary: #ff2a75; --bg: #03000a; }
+        body {
+            margin: 0; background-color: var(--bg); color: white;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            display: flex; justify-content: center; align-items: center;
+            height: 100vh; overflow: hidden;
+        }
+        body::before {
+            content: ''; position: absolute; inset: 0;
+            background-image: radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+            background-size: 50px 50px; opacity: 0.3; z-index: -1;
+        }
+        .login-box {
+            background: rgba(255, 255, 255, 0.03); padding: 50px 40px;
+            border-radius: 20px; border: 1px solid rgba(255, 42, 117, 0.2);
+            text-align: center; backdrop-filter: blur(10px);
+            box-shadow: 0 0 40px rgba(0,0,0,0.8), inset 0 0 20px rgba(255,42,117,0.05);
+            width: 85%; max-width: 400px;
+        }
+        h2 { letter-spacing: 4px; color: white; margin-bottom: 5px; font-weight: 300; }
+        .hint { font-size: 12px; color: rgba(255,255,255,0.4); letter-spacing: 1px; margin-bottom: 30px; }
+        
+        input {
+            width: 100%; padding: 15px 0; background: transparent;
+            border: none; border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+            color: white; font-size: 20px; text-align: center;
+            outline: none; letter-spacing: 3px; transition: border-color 0.3s;
+        }
+        input:focus { border-bottom: 2px solid var(--primary); }
+        input::placeholder { color: rgba(255,255,255,0.1); }
+        
+        button {
+            margin-top: 40px; padding: 15px 40px; width: 100%;
+            background: transparent; color: white; border: 1px solid var(--primary);
+            border-radius: 30px; cursor: pointer; font-size: 14px;
+            letter-spacing: 3px; transition: all 0.3s;
+        }
+        button:hover { background: var(--primary); box-shadow: 0 0 20px var(--primary); }
+        
+        #error-msg { 
+            color: #ff4d4d; margin-top: 20px; font-size: 13px; 
+            letter-spacing: 1px; display: none; animation: shake 0.4s;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+    </style>
+    <!-- Firebase Libraries -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+</head>
+<body>
+
+    <div class="login-box">
+        <h2>IDENTIFY</h2>
+        <div class="hint">ENTER PASSCODE TO UNLOCK</div>
+        <input type="password" id="passcode" placeholder="••••••••">
+        <button onclick="checkLogin()">ENTER UNIVERSE</button>
+        <div id="error-msg">ACCESS DENIED. TRY AGAIN.</div>
+    </div>
+
+    <script>
+        // YOUR EXACT FIREBASE CONFIGURATION
+        const firebaseConfig = {
+            apiKey: "AIzaSyBDfs0BvDVWG0-p3_D0VI_9GA0gkRxg4tg",
+            authDomain: "login-page-64.firebaseapp.com",
+            projectId: "login-page-64",
+            storageBucket: "login-page-64.firebasestorage.app",
+            messagingSenderId: "356749175989",
+            appId: "1:356749175989:web:61f3e3a95f7014ae9ce2fc",
+            measurementId: "G-X1Q4QLER72",
+            // I generated this databaseURL based on your project ID:
+            databaseURL: "https://login-page-64-default-rtdb.firebaseio.com"
+        };
+
+        // Initialize Firebase
+        if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
+        const database = firebase.database();
+
+        function checkLogin() {
+            const pass = document.getElementById("passcode").value.trim().toUpperCase();
+            const btn = document.querySelector("button");
+            
+            if (pass === "CHAHAT" || pass === "CHAHAT JAIN") {
+                btn.innerText = "AUTHENTICATING...";
+                btn.style.background = "#ff2a75";
+                
+                // Track the visit
+                database.ref('tracking/visits').set(firebase.database.ServerValue.increment(1));
+                database.ref('tracking/lastLogin').set(new Date().toLocaleString());
+
+                // Grant Temporary Session Access
+                sessionStorage.setItem("universe_access", "granted");
+
+                // Send to Universe
+                setTimeout(() => {
+                    window.location.href = "index.html"; 
+                }, 800);
+
+            } else {
+                const errorObj = document.getElementById("error-msg");
+                errorObj.style.display = "block";
+                document.getElementById("passcode").value = "";
+                errorObj.style.animation = 'none';
+                errorObj.offsetHeight; 
+                errorObj.style.animation = null; 
+            }
+        }
+
+        document.getElementById("passcode").addEventListener("keypress", function(event) {
+            if (event.key === "Enter") { event.preventDefault(); checkLogin(); }
+        });
+    </script>
+</body>
+</html>
