@@ -76,7 +76,7 @@
             box-shadow: 0 15px 35px rgba(0,0,0,0.4); 
             backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
             display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; 
-            width: 100%; min-width: 0; /* CRITICAL FIX: Stops cards from stretching past the screen */
+            width: 100%; min-width: 0; 
         }
         
         .card h3 { margin: 0 0 10px 0; font-size: 11px; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 3px; font-weight: 700; width: 100%; }
@@ -128,20 +128,14 @@
         .cat-interaction { background: rgba(229, 93, 135, 0.1); border: 1px solid rgba(229, 93, 135, 0.3); color: var(--pink); }
         .cat-other { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.2); color: #aaa; }
 
-        /* --- MOBILE RESPONSIVENESS FIXES --- */
         @media (max-width: 768px) { 
             body { padding: 15px 10px; }
             .dashboard { grid-template-columns: 1fr; gap: 15px; } 
             .card { padding: 20px 15px; }
-            
-            /* Fix wide card height on mobile */
             .card.wide { height: auto; min-height: 500px; padding: 15px; }
-            
-            /* Center items cleanly */
             .log-header-row { flex-direction: column; align-items: center; gap: 15px; text-align: center; }
             .log-header-row h3 { width: 100%; text-align: center; }
             .glass-select { width: 100%; max-width: 320px; text-align: center; padding: 12px; }
-            
             .card.wide::before {
                 content: 'Swipe table left/right to view details →';
                 display: block; text-align: center; font-size: 10px; color: var(--gold); 
@@ -197,8 +191,7 @@
                             <th style="width: 40%;">Details</th>
                         </tr>
                     </thead>
-                    <tbody id="log-body">
-                        </tbody>
+                    <tbody id="log-body"></tbody>
                 </table>
             </div>
         </div>
@@ -222,7 +215,8 @@
         let allLogs = [];
 
         function getCategoryInfo(actionString) {
-            const lowerAction = actionString.toLowerCase();
+            // BUG FIX 2: Ensure actionString is treated as a string to prevent errors
+            const lowerAction = String(actionString || "").toLowerCase();
             if (lowerAction.includes("login") || lowerAction.includes("visit") || lowerAction.includes("sequence")) {
                 return { name: "System", class: "cat-system" };
             }
@@ -261,8 +255,10 @@
             const data = snapshot.val();
             if (data) {
                 document.getElementById("visit-count").innerText = data.totalVisits || 0;
-                if (data.lastLoginFull) {
-                    const dateObj = new Date(data.lastLoginFull);
+                // BUG FIX 3: Check for both possible lastLogin fields based on typical tracking scripts
+                const lastLogin = data.lastLoginFull || data.lastSeen;
+                if (lastLogin) {
+                    const dateObj = new Date(lastLogin);
                     document.getElementById("last-time").innerText = dateObj.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
                     document.getElementById("last-date").innerText = dateObj.toLocaleDateString();
                 }
@@ -284,8 +280,11 @@
 
         database.ref('tracking/logs').limitToLast(100).on('value', (snapshot) => {
             allLogs = [];
-            snapshot.forEach((child) => { allLogs.push(child.val()); });
-            allLogs.reverse(); 
+            snapshot.forEach((child) => { 
+                const logData = child.val();
+                if(logData) allLogs.push(logData); 
+            });
+            allLogs.sort((a, b) => b.timestamp - a.timestamp); // Sort by newest first
             renderTable(); 
         });
 
