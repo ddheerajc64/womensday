@@ -3,48 +3,99 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Secret Tracker</title>
+    <title>Universe Command Center</title>
     <style>
+        :root { --neon-blue: #00f3ff; --neon-pink: #ff2a75; --bg: #070709; --panel: rgba(20, 20, 30, 0.8); }
         body {
-            background-color: #050505; color: #00ffcc;
-            font-family: 'Courier New', Courier, monospace;
-            display: flex; justify-content: center; align-items: center;
-            height: 100vh; margin: 0;
+            background-color: var(--bg); color: #fff; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0; padding: 20px; display: flex; justify-content: center; min-height: 100vh;
+            background-image: radial-gradient(circle at 50% 0%, #1a1a2e 0%, var(--bg) 60%);
         }
         .dashboard {
-            background: #111; padding: 50px; border-radius: 15px;
-            border: 1px solid #00ffcc; box-shadow: 0 0 30px rgba(0, 255, 204, 0.2);
-            text-align: center; width: 400px;
+            width: 100%; max-width: 1000px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
         }
-        h2 { margin: 0; font-size: 18px; color: #aaa; letter-spacing: 2px; }
-        .number {
-            font-size: 80px; font-weight: bold; margin: 20px 0;
-            text-shadow: 0 0 20px #00ffcc;
-        }
-        .timestamp { font-size: 14px; color: #888; margin-top: 20px; }
-        .timestamp span { color: #fff; }
-        .status { margin-top: 30px; font-size: 12px; color: #00ffcc; animation: blink 1s infinite; }
+        .header { grid-column: 1 / -1; text-align: center; margin-bottom: 20px; border-bottom: 1px solid rgba(0, 243, 255, 0.2); padding-bottom: 20px; }
+        .header h1 { margin: 0; color: var(--neon-blue); letter-spacing: 5px; font-weight: 300; text-transform: uppercase; }
+        .header p { margin: 5px 0 0 0; color: #888; font-size: 14px; letter-spacing: 2px; }
         
-        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+        .card {
+            background: var(--panel); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 15px;
+            padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); backdrop-filter: blur(10px);
+            display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;
+        }
+        .card.wide { grid-column: 1 / -1; align-items: flex-start; text-align: left; height: 300px; justify-content: flex-start; overflow: hidden; }
+        
+        .card h3 { margin: 0 0 10px 0; font-size: 12px; color: #aaa; text-transform: uppercase; letter-spacing: 2px; width: 100%; }
+        .value { font-size: 40px; font-weight: bold; color: white; text-shadow: 0 0 15px var(--neon-blue); }
+        .sub-value { font-size: 14px; color: var(--neon-pink); margin-top: 5px; letter-spacing: 1px; }
+        
+        .status-dot {
+            width: 12px; height: 12px; background-color: #ff4d4d; border-radius: 50%; display: inline-block; margin-right: 8px;
+            box-shadow: 0 0 10px #ff4d4d; transition: all 0.3s ease;
+        }
+        .status-dot.online { background-color: #00ffcc; box-shadow: 0 0 10px #00ffcc; animation: pulse 1.5s infinite; }
+        
+        /* Activity Log Table */
+        .log-container { width: 100%; height: 100%; overflow-y: auto; padding-right: 10px; }
+        .log-container::-webkit-scrollbar { width: 5px; }
+        .log-container::-webkit-scrollbar-thumb { background: rgba(0, 243, 255, 0.3); border-radius: 5px; }
+        table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        th { text-align: left; padding: 10px; color: #888; border-bottom: 1px solid rgba(255,255,255,0.1); position: sticky; top: 0; background: var(--panel); z-index: 10; }
+        td { padding: 12px 10px; border-bottom: 1px solid rgba(255,255,255,0.05); color: #ddd; }
+        .log-time { color: #888; font-size: 12px; white-space: nowrap; }
+        .log-action { color: var(--neon-blue); font-weight: bold; }
+        
+        @keyframes pulse { 0% { opacity: 0.6; } 50% { opacity: 1; transform: scale(1.1); } 100% { opacity: 0.6; } }
+        @media (max-width: 768px) { .dashboard { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
 
     <div class="dashboard">
-        <h2>TOTAL UNIVERSE VISITS</h2>
-        <div class="number" id="visit-count">--</div>
-        
-        <div class="timestamp">
-            Last seen on:<br>
-            <span id="last-time">Waiting for data...</span>
+        <div class="header">
+            <h1>Command Center</h1>
+            <p><span class="status-dot" id="live-dot"></span><span id="live-text">OFFLINE</span></p>
         </div>
 
-        <div class="status">● LIVE TRACKING ACTIVE</div>
+        <div class="card">
+            <h3>Total Logins</h3>
+            <div class="value" id="visit-count">0</div>
+            <div class="sub-value">Lifetime visits</div>
+        </div>
+
+        <div class="card">
+            <h3>Last Seen</h3>
+            <div class="value" style="font-size: 20px; margin-top: 10px;" id="last-time">--</div>
+            <div class="sub-value" id="last-date">Waiting...</div>
+        </div>
+
+        <div class="card">
+            <h3>Latest Device Info</h3>
+            <div class="value" style="font-size: 20px; margin-top: 10px;" id="device-os">--</div>
+            <div class="sub-value" id="device-browser">--</div>
+        </div>
+
+        <div class="card wide">
+            <h3>Live Activity Log</h3>
+            <div class="log-container">
+                <table id="log-table">
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>Action</th>
+                            <th>Details</th>
+                        </tr>
+                    </thead>
+                    <tbody id="log-body">
+                        </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { getDatabase, ref, onValue, limitToLast, query } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBDfs0BvDVWG0-p3_D0VI_9GA0gkRxg4tg",
@@ -57,19 +108,59 @@
             databaseURL: "https://login-page-64-default-rtdb.firebaseio.com"
         };
 
-        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const database = getDatabase(app);
 
-        // Listen for live updates
-        onValue(ref(database, 'tracking/visits'), (snapshot) => {
-            const visits = snapshot.val() || 0;
-            document.getElementById("visit-count").innerText = visits;
+        // 1. Track Basic Stats
+        onValue(ref(database, 'tracking/overview'), (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                document.getElementById("visit-count").innerText = data.totalVisits || 0;
+                
+                if (data.lastLoginFull) {
+                    const dateObj = new Date(data.lastLoginFull);
+                    document.getElementById("last-time").innerText = dateObj.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                    document.getElementById("last-date").innerText = dateObj.toLocaleDateString();
+                }
+                
+                document.getElementById("device-os").innerText = data.lastOS || "Unknown OS";
+                document.getElementById("device-browser").innerText = data.lastBrowser || "Unknown Browser";
+            }
         });
 
-        onValue(ref(database, 'tracking/lastLogin'), (snapshot) => {
-            const lastTime = snapshot.val() || "Never";
-            document.getElementById("last-time").innerText = lastTime;
+        // 2. Track Live Status (Online/Offline)
+        onValue(ref(database, 'tracking/live/isOnline'), (snapshot) => {
+            const isOnline = snapshot.val();
+            const dot = document.getElementById("live-dot");
+            const text = document.getElementById("live-text");
+            
+            if (isOnline) {
+                dot.classList.add("online"); text.innerText = "CHAHAT IS ONLINE"; text.style.color = "#00ffcc";
+            } else {
+                dot.classList.remove("online"); text.innerText = "OFFLINE"; text.style.color = "#888";
+            }
+        });
+
+        // 3. Track Activity Logs (Fetch last 50 events)
+        const logsRef = query(ref(database, 'tracking/logs'), limitToLast(50));
+        onValue(logsRef, (snapshot) => {
+            const logBody = document.getElementById("log-body");
+            logBody.innerHTML = ""; // Clear existing
+            
+            const logs = [];
+            snapshot.forEach((child) => { logs.push(child.val()); });
+            
+            // Reverse so newest is at the top
+            logs.reverse().forEach(log => {
+                const tr = document.createElement("tr");
+                const timeStr = new Date(log.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'});
+                tr.innerHTML = `
+                    <td class="log-time">${timeStr}</td>
+                    <td class="log-action">${log.action}</td>
+                    <td>${log.details || ''}</td>
+                `;
+                logBody.appendChild(tr);
+            });
         });
     </script>
 </body>
