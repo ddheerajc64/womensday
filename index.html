@@ -7,13 +7,14 @@
 
     <script>
         if (sessionStorage.getItem("universe_access") !== "granted") {
-            window.location.replace("login.html"); // Kick out unauthorized users
+            window.location.replace("login.html");
         } else {
-            // Delete the key immediately! If she refreshes, she gets kicked out.
             sessionStorage.removeItem("universe_access");
         }
     </script>
+
     <style>
+        /* Exact same styles as before */
         :root { --primary: #ff2a75; --secondary: #6b21a8; --accent: #4dffff; --bg: #03000a; }
         body, html { margin: 0; padding: 0; background-color: var(--bg); color: white; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; overflow-x: hidden; overscroll-behavior: none; cursor: none; }
         #loader { position: fixed; inset: 0; background: var(--bg); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 1s ease; }
@@ -89,6 +90,33 @@
             <button id="close-letter">CLOSE</button>
         </div>
     </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, set, push, onDisconnect } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBDfs0BvDVWG0-p3_D0VI_9GA0gkRxg4tg", authDomain: "login-page-64.firebaseapp.com", projectId: "login-page-64",
+            storageBucket: "login-page-64.firebasestorage.app", messagingSenderId: "356749175989", appId: "1:356749175989:web:61f3e3a95f7014ae9ce2fc", measurementId: "G-X1Q4QLER72",
+            databaseURL: "https://login-page-64-default-rtdb.firebaseio.com"
+        };
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        // Make user "Online" and handle unexpected exits
+        const liveRef = ref(database, 'tracking/live/isOnline');
+        set(liveRef, true);
+        onDisconnect(liveRef).set(false); // If she closes the tab, it marks offline
+        
+        function logActivity(action, details) {
+            push(ref(database, 'tracking/logs'), { timestamp: Date.now(), action: action, details: details });
+        }
+        
+        logActivity("Entered Universe", "Successfully loaded 3D environment");
+
+        // Make functions accessible to the ThreeJS module below
+        window.logTrackerActivity = logActivity;
+    </script>
 
     <script type="module">
         import * as THREE from 'three';
@@ -196,8 +224,16 @@
 
         const audio = document.getElementById('bg-music'), audioBtn = document.getElementById('audio-btn'), playPath = document.getElementById('play-path');
         let isPlaying = false;
-        audioBtn.addEventListener('click', () => { if (isPlaying) { audio.pause(); playPath.setAttribute('d', 'M8 5v14l11-7z'); audioBtn.style.animation = 'pulse-border 2s infinite'; } else { audio.play(); playPath.setAttribute('d', 'M6 19h4V5H6v14zm8-14v14h4V5h-4z'); audioBtn.style.animation = 'none'; } isPlaying = !isPlaying; });
-        window.addEventListener('click', () => { if (!isPlaying) audioBtn.click(); }, { once: true });
+        audioBtn.addEventListener('click', () => { 
+            if (isPlaying) { 
+                audio.pause(); playPath.setAttribute('d', 'M8 5v14l11-7z'); audioBtn.style.animation = 'pulse-border 2s infinite'; 
+                if(window.logTrackerActivity) window.logTrackerActivity("Music Paused", "");
+            } else { 
+                audio.play(); playPath.setAttribute('d', 'M6 19h4V5H6v14zm8-14v14h4V5h-4z'); audioBtn.style.animation = 'none'; 
+                if(window.logTrackerActivity) window.logTrackerActivity("Music Played", "");
+            } 
+            isPlaying = !isPlaying; 
+        });
 
         const cursorDot = document.getElementById('cursor-dot'), cursorOutline = document.getElementById('cursor-outline');
         let cursorX = window.innerWidth/2, cursorY = window.innerHeight/2, outlineX = window.innerWidth/2, outlineY = window.innerHeight/2;
@@ -212,9 +248,15 @@
             if(e.target.id === 'close-letter') return;
             const ripple = document.createElement('div'); ripple.className = 'click-ripple'; ripple.style.left = `${e.clientX}px`; ripple.style.top = `${e.clientY}px`;
             document.body.appendChild(ripple); setTimeout(() => ripple.remove(), 600);
-            if (scrollProgress > 0.85) { letterOverlay.style.opacity = '1'; letterOverlay.style.pointerEvents = 'auto'; secretPaper.style.transform = 'translateY(0) scale(1)'; }
+            if (scrollProgress > 0.85 && letterOverlay.style.opacity !== '1') { 
+                letterOverlay.style.opacity = '1'; letterOverlay.style.pointerEvents = 'auto'; secretPaper.style.transform = 'translateY(0) scale(1)'; 
+                if(window.logTrackerActivity) window.logTrackerActivity("Opened Secret Letter", "Scrolled to the end and clicked.");
+            }
         });
-        closeBtn.addEventListener('click', (e) => { e.stopPropagation(); letterOverlay.style.opacity = '0'; letterOverlay.style.pointerEvents = 'none'; secretPaper.style.transform = 'translateY(50px) scale(0.9)'; });
+        closeBtn.addEventListener('click', (e) => { 
+            e.stopPropagation(); letterOverlay.style.opacity = '0'; letterOverlay.style.pointerEvents = 'none'; secretPaper.style.transform = 'translateY(50px) scale(0.9)'; 
+            if(window.logTrackerActivity) window.logTrackerActivity("Closed Secret Letter", "");
+        });
 
         const starContainer = document.getElementById('star-container');
         function createShootingStar() {
