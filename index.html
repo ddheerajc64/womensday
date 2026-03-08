@@ -26,7 +26,6 @@
             --playfair: 'Playfair Display', serif; --lato: 'Lato', sans-serif;
         }
 
-        /* Base Body Fixes for Mobile */
         body, html { margin: 0; padding: 0; background: var(--dark-bg); color: var(--text); font-family: var(--lato); overflow-x: hidden; width: 100vw; height: 100%; overscroll-behavior: none; }
         
         #pixel-dissolve-canvas { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 99999; pointer-events: none; }
@@ -54,27 +53,14 @@
         #intro-section { height: 100vh; height: 100dvh; position: fixed; inset: 0; background: transparent; z-index: 9000; display: flex; flex-direction: column; justify-content: center; align-items: center; pointer-events: none;}
         .intro-text-block { font-family: var(--playfair); font-size: clamp(1.8rem, 4vw, 3.2rem); color: var(--text); opacity: 0; text-align: center; position: absolute; padding: 0 15px; }
         .intro-name { color: var(--gold); font-size: clamp(2.5rem, 6vw, 4.8rem); text-shadow: 0 0 30px var(--gold); font-style: italic; font-weight: 700; margin-top: 15px; }
-        .scroll-hint { position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%); text-transform: uppercase; letter-spacing: 4px; font-size: 11px; color: rgba(255,255,255,0.6); animation: bounce 2s infinite; opacity: 0; transition: opacity 1s; z-index: 50; text-align: center; width: 100%; }
+        .scroll-hint { position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%); text-transform: uppercase; letter-spacing: 4px; font-size: 11px; color: rgba(255,255,255,0.6); animation: bounce 2s infinite; opacity: 0; transition: opacity 1s; z-index: 50; text-align: center; width: 100%; pointer-events: none; }
         @keyframes bounce { 0%, 100% { transform: translate(-50%, 0); } 50% { transform: translate(-50%, -10px); } }
 
         /* 2. Photo Gallery */
         #photo-section { min-height: 120vh; padding-top: 100vh; }
         .photo-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 40px; max-width: 1000px; padding: 20px; perspective: 1500px; }
-        
-        .photo-card { 
-            width: 280px; height: 380px; 
-            border-radius: 15px; background: rgba(255,255,255,0.05); 
-            border: 1px solid rgba(255,255,255,0.1); padding: 10px; 
-            box-shadow: 0 20px 40px rgba(0,0,0,0.5); 
-            transform-style: preserve-3d; transition: transform 0.1s ease-out, box-shadow 0.3s; 
-            opacity: 0; will-change: transform;
-        }
-        
-        .photo-image-wrapper { 
-            width: 100%; height: 80%; border-radius: 10px; overflow: hidden; 
-            position: relative; transform: translateZ(30px); box-shadow: 0 10px 20px rgba(0,0,0,0.4);
-        }
-        
+        .photo-card { width: 280px; height: 380px; border-radius: 15px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 10px; box-shadow: 0 20px 40px rgba(0,0,0,0.5); transform-style: preserve-3d; transition: transform 0.1s ease-out, box-shadow 0.3s; opacity: 0; will-change: transform; }
+        .photo-image-wrapper { width: 100%; height: 80%; border-radius: 10px; overflow: hidden; position: relative; transform: translateZ(30px); box-shadow: 0 10px 20px rgba(0,0,0,0.4); background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center;}
         .photo-image-wrapper img { width: 100%; height: 100%; object-fit: cover; }
         .photo-caption { text-align: center; margin-top: 15px; font-family: var(--playfair); font-style: italic; color: var(--gold); font-size: 1.1rem; transform: translateZ(50px); text-shadow: 0 2px 10px rgba(0,0,0,0.8); }
 
@@ -84,9 +70,8 @@
         .constellation-text::before { content: 'CHAHAT JAIN'; position: absolute; inset: 0; color: #fff; text-shadow: 0 0 20px #fff, 0 0 40px var(--gold), 0 0 60px var(--gold); clip-path: polygon(0 0, 0 0, 0 100%, 0 100%); transition: clip-path 2.5s cubic-bezier(0.2, 0.8, 0.2, 1); }
         .constellation-text.revealed::before { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); }
         .constellation-text.revealed { animation: heartbeat 2s infinite 2.5s; }
-        @keyframes heartbeat { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
 
-        /* 4. Nebula Timeline Memories */
+        /* 4. Nebula Timeline */
         #timeline-section { min-height: 200vh; overflow-x: hidden; }
         .timeline { position: relative; max-width: 800px; width: 100%; padding: 40px 0; display: flex; flex-direction: column; align-items: center; }
         .timeline::before { content: ''; position: absolute; left: 50%; top: 0; bottom: 0; width: 2px; background: linear-gradient(to bottom, transparent, rgba(248,201,131,0.2), var(--gold), rgba(248,201,131,0.2), transparent); transform: translateX(-50%); }
@@ -104,7 +89,7 @@
         .mirror-text-container { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 3; padding: 0 20px; }
         .mirror-question { font-size: clamp(1rem, 3vw, 1.4rem); letter-spacing: 3px; margin-bottom: 30px; opacity: 0.8; text-align: center; color: rgba(255,255,255,0.7); }
         .mirror-answer { font-family: var(--playfair); font-size: clamp(2.5rem, 8vw, 6rem); color: var(--pink); text-shadow: 0 0 30px var(--pink), 0 0 60px #fff; font-style: italic; font-weight: bold; text-align: center; }
-        .mirror-hint { position: absolute; bottom: -40px; font-size: 12px; letter-spacing: 2px; color: rgba(255,255,255,0.5); text-transform: uppercase; animation: bounce 2s infinite; pointer-events: none; }
+        .mirror-hint { position: absolute; bottom: 40px; font-size: 12px; letter-spacing: 2px; color: rgba(255,255,255,0.5); text-transform: uppercase; animation: bounce 2s infinite; pointer-events: none; }
 
         /* 6. Finale Gift */
         #finale-section { height: 110vh; background: radial-gradient(circle, rgba(229, 93, 135, 0.2) 0%, transparent 70%); }
@@ -117,13 +102,11 @@
         .top    { transform: rotateX(90deg) translateZ(65px); border-bottom: none; transform-origin: top; } .bottom { transform: rotateX(-90deg) translateZ(65px); }
         
         .typewriter-text { font-family: var(--playfair); font-size: clamp(1.2rem, 4vw, 2.3rem); text-align: center; max-width: 800px; line-height: 1.9; min-height: 180px; color: #fff; text-shadow: 0 0 10px rgba(255,255,255,0.4); margin-bottom: 50px; padding: 0 15px; }
-        
         #supernova-btn { position: relative; padding: 12px 30px; background: transparent; border: 1px solid var(--gold); color: var(--gold); border-radius: 30px; font-size: 13px; letter-spacing: 2px; text-transform: uppercase; font-weight: bold; cursor: pointer; transition: all 0.4s; z-index: 100; box-shadow: 0 0 15px rgba(248, 201, 131, 0.2); opacity: 0; pointer-events: none; }
         #supernova-btn:hover { background: var(--gold); color: var(--dark-bg); box-shadow: 0 0 25px rgba(248, 201, 131, 0.5); }
-
         .journey-particle { position: fixed; pointer-events: none; z-index: 99999; font-size: 20px; user-select: none; text-shadow: 0 0 10px white, 0 0 20px var(--pink); }
 
-        /* MOBILE OPTIMIZATIONS */
+        /* MOBILE FIXES */
         @media (max-width: 768px) {
             .timeline::before { left: 20px; transform: translateX(0); }
             .timeline { padding-left: 10px; padding-right: 10px; }
@@ -163,22 +146,19 @@
                     </div>
                     <div class="photo-caption">Radiance</div>
                 </div>
-
                 <div class="photo-card physics-float" style="animation-delay: 1s;">
                     <div class="photo-image-wrapper">
                         <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=400&q=80" alt="Memory 2">
                     </div>
                     <div class="photo-caption">Elegance</div>
                 </div>
-
                 <div class="photo-card physics-float-alt" style="animation-delay: 2s;">
                     <div class="photo-image-wrapper">
                         <img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=400&q=80" alt="Memory 3">
                     </div>
                     <div class="photo-caption">Perfection</div>
                 </div>
-
-                </div>
+            </div>
         </div>
 
         <div class="section" id="starry-section">
@@ -195,7 +175,8 @@
                 <div class="tl-card physics-float-alt" style="animation-delay: 1s;"><span>"That one specific trip we went on to..."</span></div>
                 <div class="tl-card physics-float" style="animation-delay: 2s;"><span>"Your infectious laugh that no one can ignore..."</span></div>
                 <div class="tl-card physics-float-alt" style="animation-delay: 0.5s;"><span>"The quiet moment when you shared your..."</span></div>
-                </div>
+                
+            </div>
         </div>
 
         <div class="section" id="mirror-section">
@@ -246,11 +227,9 @@
         const pixelCanvas = document.getElementById('pixel-dissolve-canvas');
         const pCtx = pixelCanvas.getContext('2d');
         pixelCanvas.width = window.innerWidth; pixelCanvas.height = window.innerHeight;
-        
         pCtx.fillStyle = '#000000';
         pCtx.fillRect(0, 0, pixelCanvas.width, pixelCanvas.height);
 
-        // Larger grid on mobile for better performance
         const isMobile = window.innerWidth < 768;
         const gridSize = isMobile ? 40 : 30;
         const cols = Math.ceil(pixelCanvas.width / gridSize);
@@ -262,7 +241,6 @@
                 blocks.push({ x: x*gridSize, y: y*gridSize, w: gridSize, h: gridSize });
             }
         }
-
         blocks.sort(() => Math.random() - 0.5);
 
         function dissolvePixels() {
@@ -276,21 +254,31 @@
             });
             setTimeout(() => pixelCanvas.remove(), 1500);
         }
-
         window.onload = () => { setTimeout(dissolvePixels, 500); };
 
-        // --- 2. AUDIO & UI SETUP ---
+        // --- 2. AUDIO SETUP ---
         const audio = document.getElementById('bg-music');
         const audioBtn = document.getElementById('audio-btn');
         let isPlaying = false;
-        document.body.addEventListener('click', () => { if(!isPlaying) audioBtn.click(); }, {once: true});
-        audioBtn.addEventListener('click', () => { 
+        
+        // Mobile auto-play fix
+        document.body.addEventListener('click', () => { 
+            if(!isPlaying) {
+                audio.play().then(() => {
+                    isPlaying = true;
+                    document.getElementById('play-path').setAttribute('d', 'M6 19h4V5H6v14zm8-14v14h4V5h-4z');
+                }).catch(e => console.log("Audio play blocked by browser"));
+            }
+        }, {once: true});
+
+        audioBtn.addEventListener('click', (e) => { 
+            e.stopPropagation();
             if (isPlaying) { audio.pause(); document.getElementById('play-path').setAttribute('d', 'M8 5v14l11-7z'); } 
             else { audio.play(); document.getElementById('play-path').setAttribute('d', 'M6 19h4V5H6v14zm8-14v14h4V5h-4z'); } 
             isPlaying = !isPlaying; 
         });
 
-        // --- 3. 3D HOVER LAYER SHIFT (PARALLAX) ON PHOTOS (PC ONLY) ---
+        // --- 3. 3D HOVER LAYER SHIFT (PC ONLY) ---
         const photoCards = document.querySelectorAll('.photo-card');
         const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 
@@ -298,12 +286,9 @@
             photoCards.forEach(card => {
                 card.addEventListener('mousemove', (e) => {
                     const rect = card.getBoundingClientRect();
-                    const x = e.clientX - rect.left; 
-                    const y = e.clientY - rect.top;
-                    const centerX = rect.width / 2;
-                    const centerY = rect.height / 2;
-                    const rotateX = ((y - centerY) / centerY) * -15;
-                    const rotateY = ((x - centerX) / centerX) * 15;
+                    const x = e.clientX - rect.left; const y = e.clientY - rect.top;
+                    const rotateX = ((y - (rect.height / 2)) / (rect.height / 2)) * -15;
+                    const rotateY = ((x - (rect.width / 2)) / (rect.width / 2)) * 15;
                     card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.05, 1.05, 1.05)`;
                     card.style.boxShadow = `${-rotateY}px ${rotateX}px 30px rgba(248, 201, 131, 0.3)`;
                 });
@@ -314,11 +299,10 @@
             });
         }
 
-        // --- 4. PROCEDURAL NEBULA BACKGROUND (Three.js) ---
+        // --- 4. PROCEDURAL NEBULA BACKGROUND ---
         const mainCanvas = document.getElementById('webgl-canvas');
         const renderer = new THREE.WebGLRenderer({ canvas: mainCanvas, alpha: true, antialias: false, powerPreference: "high-performance" });
         renderer.setSize(window.innerWidth, window.innerHeight);
-        // Reduce pixel ratio on mobile for massive performance boost
         renderer.setPixelRatio(isMobile ? 1 : Math.min(window.devicePixelRatio, 2));
         
         const scene = new THREE.Scene();
@@ -326,7 +310,6 @@
         camera.position.z = 100;
 
         const particlesGeometry = new THREE.BufferGeometry();
-        // Lower particle count strictly for mobile devices to prevent crashing
         const pCount = isMobile ? 350 : 1500;
         const posArray = new Float32Array(pCount * 3);
         const colorsArray = new Float32Array(pCount * 3);
@@ -335,7 +318,6 @@
             posArray[i] = (Math.random() - 0.5) * 400;     
             posArray[i+1] = (Math.random() - 0.5) * 400;   
             posArray[i+2] = (Math.random() - 0.5) * 300;   
-            
             const colorType = Math.random();
             if(colorType > 0.8) { colorsArray[i] = 0.9; colorsArray[i+1] = 0.36; colorsArray[i+2] = 0.53; } 
             else if(colorType > 0.6) { colorsArray[i] = 0.97; colorsArray[i+1] = 0.78; colorsArray[i+2] = 0.51; } 
@@ -344,15 +326,12 @@
 
         particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
         particlesGeometry.setAttribute('color', new THREE.BufferAttribute(colorsArray, 3));
-
         const particlesMaterial = new THREE.PointsMaterial({ size: isMobile ? 2.5 : 1.5, vertexColors: true, transparent: true, opacity: 0.8, blending: THREE.AdditiveBlending });
         const starfield = new THREE.Points(particlesGeometry, particlesMaterial);
         scene.add(starfield);
 
         let mouseX = 0, mouseY = 0;
-        if(!isTouchDevice) {
-            window.addEventListener('mousemove', (e) => { mouseX = (e.clientX / window.innerWidth) - 0.5; mouseY = (e.clientY / window.innerHeight) - 0.5; });
-        }
+        if(!isTouchDevice) { window.addEventListener('mousemove', (e) => { mouseX = (e.clientX / window.innerWidth) - 0.5; mouseY = (e.clientY / window.innerHeight) - 0.5; }); }
         
         let currentW = window.innerWidth;
         window.addEventListener('resize', () => { 
@@ -360,12 +339,12 @@
             currentW = window.innerWidth;
             camera.aspect = window.innerWidth / window.innerHeight; camera.updateProjectionMatrix(); 
             renderer.setSize(window.innerWidth, window.innerHeight); initFogCanvas(); 
+            ScrollTrigger.refresh(); // Important for resizing on mobile
         });
 
         function animate3D() {
             requestAnimationFrame(animate3D);
-            starfield.rotation.y += 0.0005;
-            starfield.rotation.x += 0.0002;
+            starfield.rotation.y += 0.0005; starfield.rotation.x += 0.0002;
             camera.position.x += (mouseX * 10 - camera.position.x) * 0.05;
             camera.position.y += (-mouseY * 10 - camera.position.y) * 0.05;
             camera.lookAt(scene.position);
@@ -376,7 +355,7 @@
         // --- 5. MAGICAL CLICK EXPLOSION ---
         window.addEventListener('click', (e) => {
             if(e.target.closest('#audio-btn') || e.target.closest('#gift-box') || e.target.closest('#supernova-btn')) return;
-            createExplosion(e.clientX, e.clientY, ['💖', '✨', '⭐'], 8); // Reduced count for performance
+            createExplosion(e.clientX, e.clientY, ['💖', '✨', '⭐'], isMobile ? 5 : 8); 
         });
 
         function createExplosion(x, y, emojis, count) {
@@ -386,7 +365,6 @@
                 particle.innerText = emojis[Math.floor(Math.random() * emojis.length)];
                 particle.style.left = x + 'px'; particle.style.top = y + 'px';
                 document.body.appendChild(particle);
-
                 gsap.to(particle, {
                     x: x + (Math.random() - 0.5) * 300, y: y + (Math.random() - 0.5) * 300,
                     rotation: Math.random() * 720, opacity: 0, scale: Math.random() * 2 + 0.5,
@@ -402,7 +380,7 @@
             document.getElementById('intro-section').style.pointerEvents = 'none';
             gsap.to('#scroll-hint', {opacity: 0.7, duration: 1});
             document.body.style.overflowY = 'auto'; 
-            ScrollTrigger.refresh();
+            ScrollTrigger.refresh(); // Fixes layout bugs after intro
         }});
         document.body.style.overflowY = 'hidden';
 
@@ -414,22 +392,16 @@
         gsap.to(window, { scrollTrigger: { trigger: 'body', start: "top top", end: "bottom bottom", scrub: true }, onUpdate: self => document.getElementById('progress-bar').style.width = self.progress * 100 + "%" });
 
         gsap.utils.toArray('.photo-card').forEach((card, i) => {
-            gsap.fromTo(card, 
-                { opacity: 0, scale: 0.9, y: 50 },
-                { scrollTrigger: { trigger: card, start: "top 85%" }, opacity: 1, scale: 1, y: 0, duration: 1, ease: "back.out(1.5)", delay: isMobile ? 0 : i * 0.2 }
-            );
+            gsap.fromTo(card, { opacity: 0, scale: 0.9, y: 50 }, { scrollTrigger: { trigger: card, start: "top 85%" }, opacity: 1, scale: 1, y: 0, duration: 1, ease: "back.out(1.5)", delay: isMobile ? 0 : i * 0.2 });
         });
 
         ScrollTrigger.create({ trigger: "#starry-section", start: "top 50%", onEnter: () => document.getElementById('star-name').classList.add('revealed') });
 
         gsap.utils.toArray('.tl-card').forEach((card, i) => {
-            gsap.fromTo(card,
-                { opacity: 0, scale: 0.9, x: isMobile ? 0 : (i % 2 === 0 ? -50 : 50), y: isMobile ? 50 : 0 },
-                { scrollTrigger: { trigger: card, start: "top 85%" }, opacity: 1, scale: 1, x: 0, y: 0, duration: 1, ease: "power3.out" }
-            );
+            gsap.fromTo(card, { opacity: 0, scale: 0.9, x: isMobile ? 0 : (i % 2 === 0 ? -50 : 50), y: isMobile ? 50 : 0 }, { scrollTrigger: { trigger: card, start: "top 85%" }, opacity: 1, scale: 1, x: 0, y: 0, duration: 1, ease: "power3.out" });
         });
 
-        // --- 7. FOGGY MIRROR EFFECT ---
+        // --- 7. FOGGY MIRROR EFFECT (MOBILE FIXED) ---
         const fogCanvas = document.getElementById('fog-canvas');
         const ctx = fogCanvas.getContext('2d');
         let isDrawing = false, mirrorRevealed = false;
@@ -454,22 +426,13 @@
             if(!mirrorRevealed) { mirrorRevealed = true; document.querySelector('.mirror-hint').style.display = 'none'; gsap.to('#mirror-answer', { scale: 1.05, duration: 0.2, yoyo: true, repeat: 1 }); }
         }
         
-        // Critical Touch Event Fixes for Mobile
+        // Critical Touch Fix: passive: false allows preventDefault to stop page scrolling while wiping
         fogCanvas.addEventListener('mousedown', (e) => { isDrawing = true; ctx.beginPath(); eraseFog(e); });
         fogCanvas.addEventListener('mousemove', eraseFog);
         fogCanvas.addEventListener('mouseup', () => { isDrawing = false; ctx.beginPath(); });
         
-        fogCanvas.addEventListener('touchstart', (e) => { 
-            isDrawing = true; 
-            ctx.beginPath(); 
-            eraseFog(e); 
-        }, {passive: true});
-        
-        fogCanvas.addEventListener('touchmove', (e) => { 
-            e.preventDefault(); // Prevents the screen from scrolling while she is wiping the mirror
-            eraseFog(e); 
-        }, {passive: false});
-        
+        fogCanvas.addEventListener('touchstart', (e) => { isDrawing = true; ctx.beginPath(); eraseFog(e); }, {passive: false});
+        fogCanvas.addEventListener('touchmove', (e) => { e.preventDefault(); eraseFog(e); }, {passive: false});
         fogCanvas.addEventListener('touchend', () => { isDrawing = false; ctx.beginPath(); });
 
         // --- 8. FINALE & SUPERNOVA ---
@@ -495,11 +458,13 @@
             gsap.to('.front', { rotationX: -90, duration: 1.2, ease: "power2.inOut"});
             createExplosion(e.clientX, e.clientY, ['💖', '✨', '⭐', '🎉', '🌸'], 20);
             setTimeout(() => { typeWriter(finalMessageText, 0); }, 1000);
+            // Re-calculate scroll height after text expands
+            setTimeout(() => { ScrollTrigger.refresh(); }, 5000); 
         });
 
         supernovaBtn.addEventListener('click', (e) => {
             if(window.logTrackerActivity) logActivity("Interaction", "Triggered Supernova");
-            createExplosion(window.innerWidth/2, window.innerHeight/2, ['💖', '✨', '⭐', '🌸'], 40);
+            createExplosion(window.innerWidth/2, window.innerHeight/2, ['💖', '✨', '⭐', '🌸'], isMobile ? 30 : 60);
             supernovaBtn.innerText = "COSMOS IGNITED ✨";
             supernovaBtn.style.pointerEvents = "none";
         });
