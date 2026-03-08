@@ -6,36 +6,18 @@
     <title>Universe Command Center</title>
     <style>
         :root { --neon-blue: #00f3ff; --neon-pink: #ff2a75; --bg: #070709; --panel: rgba(20, 20, 30, 0.8); }
-        body {
-            background-color: var(--bg); color: #fff; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0; padding: 20px; display: flex; justify-content: center; min-height: 100vh;
-            background-image: radial-gradient(circle at 50% 0%, #1a1a2e 0%, var(--bg) 60%);
-        }
-        .dashboard {
-            width: 100%; max-width: 1000px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
-        }
+        body { background-color: var(--bg); color: #fff; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 20px; display: flex; justify-content: center; min-height: 100vh; background-image: radial-gradient(circle at 50% 0%, #1a1a2e 0%, var(--bg) 60%); }
+        .dashboard { width: 100%; max-width: 1000px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
         .header { grid-column: 1 / -1; text-align: center; margin-bottom: 20px; border-bottom: 1px solid rgba(0, 243, 255, 0.2); padding-bottom: 20px; }
         .header h1 { margin: 0; color: var(--neon-blue); letter-spacing: 5px; font-weight: 300; text-transform: uppercase; }
         .header p { margin: 5px 0 0 0; color: #888; font-size: 14px; letter-spacing: 2px; }
-        
-        .card {
-            background: var(--panel); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 15px;
-            padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); backdrop-filter: blur(10px);
-            display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;
-        }
+        .card { background: var(--panel); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 15px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); backdrop-filter: blur(10px); display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
         .card.wide { grid-column: 1 / -1; align-items: flex-start; text-align: left; height: 300px; justify-content: flex-start; overflow: hidden; }
-        
         .card h3 { margin: 0 0 10px 0; font-size: 12px; color: #aaa; text-transform: uppercase; letter-spacing: 2px; width: 100%; }
         .value { font-size: 40px; font-weight: bold; color: white; text-shadow: 0 0 15px var(--neon-blue); }
         .sub-value { font-size: 14px; color: var(--neon-pink); margin-top: 5px; letter-spacing: 1px; }
-        
-        .status-dot {
-            width: 12px; height: 12px; background-color: #ff4d4d; border-radius: 50%; display: inline-block; margin-right: 8px;
-            box-shadow: 0 0 10px #ff4d4d; transition: all 0.3s ease;
-        }
+        .status-dot { width: 12px; height: 12px; background-color: #ff4d4d; border-radius: 50%; display: inline-block; margin-right: 8px; box-shadow: 0 0 10px #ff4d4d; transition: all 0.3s ease; }
         .status-dot.online { background-color: #00ffcc; box-shadow: 0 0 10px #00ffcc; animation: pulse 1.5s infinite; }
-        
-        /* Activity Log Table */
         .log-container { width: 100%; height: 100%; overflow-y: auto; padding-right: 10px; }
         .log-container::-webkit-scrollbar { width: 5px; }
         .log-container::-webkit-scrollbar-thumb { background: rgba(0, 243, 255, 0.3); border-radius: 5px; }
@@ -44,59 +26,45 @@
         td { padding: 12px 10px; border-bottom: 1px solid rgba(255,255,255,0.05); color: #ddd; }
         .log-time { color: #888; font-size: 12px; white-space: nowrap; }
         .log-action { color: var(--neon-blue); font-weight: bold; }
-        
         @keyframes pulse { 0% { opacity: 0.6; } 50% { opacity: 1; transform: scale(1.1); } 100% { opacity: 0.6; } }
         @media (max-width: 768px) { .dashboard { grid-template-columns: 1fr; } }
     </style>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 </head>
 <body>
-
     <div class="dashboard">
         <div class="header">
             <h1>Command Center</h1>
             <p><span class="status-dot" id="live-dot"></span><span id="live-text">OFFLINE</span></p>
         </div>
-
         <div class="card">
             <h3>Total Logins</h3>
             <div class="value" id="visit-count">0</div>
             <div class="sub-value">Lifetime visits</div>
         </div>
-
         <div class="card">
             <h3>Last Seen</h3>
             <div class="value" style="font-size: 20px; margin-top: 10px;" id="last-time">--</div>
             <div class="sub-value" id="last-date">Waiting...</div>
         </div>
-
         <div class="card">
             <h3>Latest Device Info</h3>
             <div class="value" style="font-size: 20px; margin-top: 10px;" id="device-os">--</div>
             <div class="sub-value" id="device-browser">--</div>
         </div>
-
         <div class="card wide">
             <h3>Live Activity Log</h3>
             <div class="log-container">
                 <table id="log-table">
-                    <thead>
-                        <tr>
-                            <th>Time</th>
-                            <th>Action</th>
-                            <th>Details</th>
-                        </tr>
-                    </thead>
-                    <tbody id="log-body">
-                        </tbody>
+                    <thead><tr><th>Time</th><th>Action</th><th>Details</th></tr></thead>
+                    <tbody id="log-body"></tbody>
                 </table>
             </div>
         </div>
     </div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, onValue, limitToLast, query } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
-
+    <script>
         const firebaseConfig = {
             apiKey: "AIzaSyBDfs0BvDVWG0-p3_D0VI_9GA0gkRxg4tg",
             authDomain: "login-page-64.firebaseapp.com",
@@ -108,57 +76,37 @@
             databaseURL: "https://login-page-64-default-rtdb.firebaseio.com"
         };
 
-        const app = initializeApp(firebaseConfig);
-        const database = getDatabase(app);
+        if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
+        const database = firebase.database();
 
-        // 1. Track Basic Stats
-        onValue(ref(database, 'tracking/overview'), (snapshot) => {
+        database.ref('tracking/overview').on('value', (snapshot) => {
             const data = snapshot.val();
             if (data) {
                 document.getElementById("visit-count").innerText = data.totalVisits || 0;
-                
                 if (data.lastLoginFull) {
                     const dateObj = new Date(data.lastLoginFull);
                     document.getElementById("last-time").innerText = dateObj.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
                     document.getElementById("last-date").innerText = dateObj.toLocaleDateString();
                 }
-                
                 document.getElementById("device-os").innerText = data.lastOS || "Unknown OS";
                 document.getElementById("device-browser").innerText = data.lastBrowser || "Unknown Browser";
             }
         });
 
-        // 2. Track Live Status (Online/Offline)
-        onValue(ref(database, 'tracking/live/isOnline'), (snapshot) => {
+        database.ref('tracking/live/isOnline').on('value', (snapshot) => {
             const isOnline = snapshot.val();
-            const dot = document.getElementById("live-dot");
-            const text = document.getElementById("live-text");
-            
-            if (isOnline) {
-                dot.classList.add("online"); text.innerText = "CHAHAT IS ONLINE"; text.style.color = "#00ffcc";
-            } else {
-                dot.classList.remove("online"); text.innerText = "OFFLINE"; text.style.color = "#888";
-            }
+            const dot = document.getElementById("live-dot"); const text = document.getElementById("live-text");
+            if (isOnline) { dot.classList.add("online"); text.innerText = "CHAHAT IS ONLINE"; text.style.color = "#00ffcc"; } 
+            else { dot.classList.remove("online"); text.innerText = "OFFLINE"; text.style.color = "#888"; }
         });
 
-        // 3. Track Activity Logs (Fetch last 50 events)
-        const logsRef = query(ref(database, 'tracking/logs'), limitToLast(50));
-        onValue(logsRef, (snapshot) => {
-            const logBody = document.getElementById("log-body");
-            logBody.innerHTML = ""; // Clear existing
-            
-            const logs = [];
-            snapshot.forEach((child) => { logs.push(child.val()); });
-            
-            // Reverse so newest is at the top
+        database.ref('tracking/logs').limitToLast(50).on('value', (snapshot) => {
+            const logBody = document.getElementById("log-body"); logBody.innerHTML = ""; 
+            const logs = []; snapshot.forEach((child) => { logs.push(child.val()); });
             logs.reverse().forEach(log => {
                 const tr = document.createElement("tr");
                 const timeStr = new Date(log.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'});
-                tr.innerHTML = `
-                    <td class="log-time">${timeStr}</td>
-                    <td class="log-action">${log.action}</td>
-                    <td>${log.details || ''}</td>
-                `;
+                tr.innerHTML = `<td class="log-time">${timeStr}</td><td class="log-action">${log.action}</td><td>${log.details || ''}</td>`;
                 logBody.appendChild(tr);
             });
         });
