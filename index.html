@@ -3,7 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>A Universe For Chahat - Happy Women's Day</title>
+    <title>For Chahat - Happy Women's Day</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 
     <script>
         if (sessionStorage.getItem("universe_access") !== "granted") { window.location.replace("login.html"); } 
@@ -11,80 +15,134 @@
     </script>
 
     <style>
-        :root { --primary: #ff2a75; --secondary: #6b21a8; --accent: #4dffff; --bg: #03000a; }
-        body, html { margin: 0; padding: 0; background-color: var(--bg); color: white; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; overflow-x: hidden; overscroll-behavior: none; cursor: none; }
-        #loader { position: fixed; inset: 0; background: var(--bg); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 1s ease; }
-        .spinner { width: 50px; height: 50px; border: 3px solid rgba(255,42,117,0.3); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px; }
+        :root { 
+            --bg-top: #1a0b2e; 
+            --bg-mid: #4b1d52; 
+            --bg-bottom: #e55d87;
+            --gold: #f8c983;
+            --text-main: #fcfcfc;
+        }
+        
+        body, html { 
+            margin: 0; padding: 0; 
+            background: linear-gradient(135deg, var(--bg-top), var(--bg-mid), var(--bg-bottom));
+            background-attachment: fixed;
+            color: var(--text-main); 
+            font-family: 'Lato', sans-serif; 
+            overflow-x: hidden; overscroll-behavior: none; 
+        }
+
+        h1, h2, .fancy-text { font-family: 'Playfair Display', serif; }
+
+        /* Loader */
+        #loader { position: fixed; inset: 0; background: var(--bg-top); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 1.5s ease; }
+        .spinner { width: 40px; height: 40px; border: 2px solid rgba(248, 201, 131, 0.2); border-top-color: var(--gold); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
-        .scroll-container { height: 1000vh; width: 100%; position: absolute; top: 0; left: 0; z-index: 1; }
-        #webgl-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; pointer-events: none; }
-        .ui-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; display: flex; justify-content: center; align-items: center; z-index: 10; }
-        .scroll-hint { position: absolute; bottom: 50px; text-transform: uppercase; letter-spacing: 4px; font-size: 12px; opacity: 0.8; animation: pulse 2s infinite; text-align: center; width: 100%; }
-        @keyframes pulse { 0%, 100% { opacity: 0.4; transform: translateY(0); } 50% { opacity: 1; transform: translateY(-10px); } }
-        .cards-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; max-width: 900px; padding: 20px; opacity: 0; transition: opacity 1s ease; perspective: 1000px; }
-        .card { width: 160px; height: 220px; background: rgba(255, 255, 255, 0.03); border-radius: 15px; border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); display: flex; justify-content: center; align-items: center; text-align: center; padding: 10px; font-size: 16px; font-weight: 300; letter-spacing: 1px; pointer-events: auto; cursor: none; position: relative; overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.4), inset 0 0 20px rgba(255,255,255,0.02); transition: transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94); transform-style: preserve-3d; }
-        .card::before { content: ''; position: absolute; inset: 0; background: radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255, 255, 255, 0.15), transparent 40%); z-index: 1; }
-        .card::after { content: ''; position: absolute; inset: 0; background: linear-gradient(125deg, transparent 20%, rgba(255,255,255,0.4) 40%, var(--primary) 50%, transparent 60%); background-size: 200% 200%; opacity: 0; transition: opacity 0.3s; mix-blend-mode: color-dodge; }
-        .card:hover::after, .card:active::after { opacity: 1; animation: holo-shine 2s infinite linear; }
-        .card span { position: relative; z-index: 2; text-shadow: 0 0 15px rgba(255,255,255,0.6); transform: translateZ(40px); }
-        #final-message { position: absolute; font-size: clamp(24px, 4vw, 45px); line-height: 1.4; text-align: center; letter-spacing: 6px; opacity: 0; padding: 20px; text-shadow: 0 0 20px var(--primary), 0 0 40px var(--secondary); transform: scale(0.8) translateY(20px); transition: all 2s cubic-bezier(0.175, 0.885, 0.32, 1.275); pointer-events: none; }
-        .highlight { color: var(--accent); font-weight: bold; text-shadow: 0 0 20px var(--accent); }
-        .cursor-dot { position: fixed; width: 6px; height: 6px; background-color: white; border-radius: 50%; pointer-events: none; z-index: 99999; transform: translate(-50%, -50%); box-shadow: 0 0 10px white, 0 0 20px var(--primary); }
-        .cursor-outline { position: fixed; width: 40px; height: 40px; border: 1px solid rgba(255, 255, 255, 0.5); border-radius: 50%; pointer-events: none; z-index: 99998; transform: translate(-50%, -50%); transition: width 0.2s, height 0.2s, background-color 0.2s; }
-        .click-ripple { position: fixed; border: 2px solid var(--accent); border-radius: 50%; transform: translate(-50%, -50%) scale(0); pointer-events: none; z-index: 99997; animation: ripple-anim 0.6s cubic-bezier(0.1, 0.8, 0.3, 1) forwards; }
-        @keyframes ripple-anim { 0% { width: 0; height: 0; opacity: 1; } 100% { width: 150px; height: 150px; opacity: 0; border-width: 0px; } }
-        .progress-track { position: fixed; right: 20px; top: 50%; transform: translateY(-50%); width: 2px; height: 40vh; background: rgba(255, 255, 255, 0.1); z-index: 50; border-radius: 2px; pointer-events: none; }
-        .progress-fill { position: absolute; top: 0; width: 100%; background: var(--primary); box-shadow: 0 0 10px var(--primary), 0 0 20px var(--secondary); border-radius: 2px; height: 0%; transition: height 0.1s linear; }
-        #audio-btn { position: fixed; top: 20px; right: 20px; width: 45px; height: 45px; border-radius: 50%; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2); display: flex; justify-content: center; align-items: center; z-index: 100; cursor: none; pointer-events: auto; animation: pulse-border 2s infinite; }
-        #audio-btn svg { width: 20px; height: 20px; fill: white; transition: transform 0.2s; }
-        #audio-btn:hover svg { transform: scale(1.2); fill: var(--primary); }
-        @keyframes pulse-border { 0%, 100% { box-shadow: 0 0 0 0 rgba(255, 42, 117, 0.4); } 50% { box-shadow: 0 0 0 15px rgba(255, 42, 117, 0); } }
-        #star-container { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
-        .shooting-star { position: absolute; width: 100px; height: 2px; background: linear-gradient(90deg, rgba(255,255,255,1), transparent); opacity: 0; transform: rotate(-45deg); animation: shoot 3s linear forwards; }
-        @keyframes shoot { 0% { transform: translateX(0) translateY(0) rotate(-45deg); opacity: 1; } 100% { transform: translateX(-500px) translateY(500px) rotate(-45deg); opacity: 0; } }
-        #secret-letter-overlay { position: fixed; inset: 0; background: rgba(3, 0, 10, 0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); z-index: 100000; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.8s ease; }
-        .secret-paper { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 42, 117, 0.3); padding: 40px; border-radius: 20px; max-width: 600px; width: 85%; text-align: center; box-shadow: 0 0 50px rgba(255, 42, 117, 0.2); transform: translateY(50px) scale(0.9); transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); pointer-events: auto; }
-        .secret-paper h2 { color: var(--primary); letter-spacing: 4px; margin-bottom: 20px; text-transform: uppercase; }
-        .secret-paper p { font-size: 18px; line-height: 1.8; color: #e2e8f0; font-weight: 300; font-family: serif; font-style: italic; }
-        #close-letter { margin-top: 30px; padding: 10px 30px; background: transparent; border: 1px solid var(--primary); color: white; border-radius: 30px; cursor: pointer; font-size: 14px; letter-spacing: 2px; transition: background 0.3s, box-shadow 0.3s; }
-        #close-letter:hover { background: var(--primary); box-shadow: 0 0 20px var(--primary); }
-        @media (max-width: 768px) { body { cursor: auto; } .cursor-dot, .cursor-outline { display: none; } .card { width: 130px; height: 180px; font-size: 14px; cursor: auto; } .cards-container { gap: 15px; } .progress-track { right: 10px; height: 30vh; } #audio-btn { cursor: auto; } .secret-paper p { font-size: 16px; } }
+
+        /* 3D Canvas */
+        .scroll-container { height: 600vh; width: 100%; position: absolute; top: 0; left: 0; z-index: 1; }
+        #webgl-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 0; pointer-events: none; mix-blend-mode: screen; }
+        
+        /* UI Elements */
+        .ui-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 10; }
+        
+        .intro-text { position: absolute; top: 30%; text-align: center; opacity: 1; transition: opacity 1s; }
+        .intro-text h1 { font-size: 3rem; font-weight: 400; letter-spacing: 4px; margin: 0; background: -webkit-linear-gradient(45deg, #fff, var(--gold)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .intro-text p { font-size: 1.2rem; font-weight: 300; letter-spacing: 2px; opacity: 0.8; }
+
+        .scroll-hint { position: absolute; bottom: 40px; text-transform: uppercase; letter-spacing: 4px; font-size: 11px; opacity: 0.8; animation: bounce 2s infinite; text-align: center; width: 100%; color: var(--gold); }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+
+        /* Glassmorphism Cards */
+        .cards-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 30px; max-width: 1000px; padding: 20px; opacity: 0; transition: opacity 1s ease, transform 1s ease; transform: translateY(50px); }
+        .card { 
+            width: 200px; height: 260px; 
+            background: rgba(255, 255, 255, 0.05); 
+            border-radius: 20px; 
+            border: 1px solid rgba(255, 255, 255, 0.15); 
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); 
+            display: flex; justify-content: center; align-items: center; text-align: center; 
+            padding: 20px; font-size: 16px; line-height: 1.6; font-weight: 300; letter-spacing: 1px; 
+            pointer-events: auto; position: relative; overflow: hidden; 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2), inset 0 0 20px rgba(255,255,255,0.05); 
+            transition: transform 0.4s ease, border-color 0.4s ease; 
+        }
+        .card:hover { transform: translateY(-10px); border-color: var(--gold); }
+        .card span { position: relative; z-index: 2; text-shadow: 0 2px 10px rgba(0,0,0,0.3); }
+
+        /* Final Message */
+        #final-message { position: absolute; font-size: clamp(28px, 5vw, 55px); line-height: 1.3; text-align: center; opacity: 0; padding: 20px; transform: scale(0.9) translateY(20px); transition: all 2s cubic-bezier(0.175, 0.885, 0.32, 1.275); pointer-events: none; }
+        .highlight { font-style: italic; color: var(--gold); font-weight: 600; letter-spacing: 2px; }
+
+        /* Controls */
+        #audio-btn { position: fixed; top: 25px; right: 25px; width: 50px; height: 50px; border-radius: 50%; background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.3); display: flex; justify-content: center; align-items: center; z-index: 100; cursor: pointer; pointer-events: auto; transition: background 0.3s; }
+        #audio-btn:hover { background: rgba(255, 255, 255, 0.2); }
+        #audio-btn svg { width: 22px; height: 22px; fill: var(--gold); }
+        
+        .progress-track { position: fixed; left: 20px; top: 50%; transform: translateY(-50%); width: 3px; height: 30vh; background: rgba(255, 255, 255, 0.1); z-index: 50; border-radius: 3px; }
+        .progress-fill { position: absolute; top: 0; width: 100%; background: var(--gold); box-shadow: 0 0 15px var(--gold); border-radius: 3px; height: 0%; transition: height 0.1s linear; }
+
+        /* Secret Letter */
+        #secret-letter-overlay { position: fixed; inset: 0; background: rgba(15, 12, 41, 0.8); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); z-index: 100000; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.8s ease; }
+        .secret-paper { background: rgba(255, 255, 255, 0.95); padding: 50px 40px; border-radius: 10px; max-width: 500px; width: 85%; text-align: center; box-shadow: 0 30px 60px rgba(0,0,0,0.4); transform: translateY(50px); transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); pointer-events: auto; color: #333; }
+        .secret-paper h2 { color: var(--bg-mid); letter-spacing: 3px; margin-bottom: 25px; font-size: 24px; border-bottom: 1px solid rgba(0,0,0,0.1); padding-bottom: 15px; }
+        .secret-paper p { font-size: 17px; line-height: 1.8; color: #555; font-weight: 400; font-family: 'Playfair Display', serif; }
+        #close-letter { margin-top: 35px; padding: 12px 40px; background: var(--bg-mid); border: none; color: white; border-radius: 30px; cursor: pointer; font-size: 13px; letter-spacing: 2px; font-weight: bold; transition: background 0.3s, transform 0.2s; }
+        #close-letter:hover { background: var(--bg-bottom); transform: translateY(-2px); }
+
+        @media (max-width: 768px) { 
+            .card { width: 140px; height: 190px; font-size: 14px; padding: 15px; } 
+            .cards-container { gap: 15px; } 
+            .intro-text h1 { font-size: 2.2rem; }
+            .secret-paper { padding: 40px 25px; }
+        }
     </style>
+    
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-    <script type="importmap"> { "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js", "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/" } } </script>
+    
+    <script type="importmap"> { "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js" } } </script>
 </head>
 <body>
-    <audio id="bg-music" loop><source src="https://assets.mixkit.co/music/preview/mixkit-space-journey-ambient-1473.mp3" type="audio/mpeg"></audio>
-    <div id="loader"><div class="spinner"></div><div style="letter-spacing: 3px; font-size: 12px; color: #ff2a75;">BUILDING HER UNIVERSE...</div></div>
+    <audio id="bg-music" loop><source src="https://assets.mixkit.co/music/preview/mixkit-beautiful-dream-493.mp3" type="audio/mpeg"></audio>
+    
+    <div id="loader"><div class="spinner"></div><div class="fancy-text" style="letter-spacing: 3px; font-size: 14px; color: var(--gold);">PREPARING SOMETHING SPECIAL...</div></div>
+    
     <div id="audio-btn" title="Play Music"><svg viewBox="0 0 24 24" id="audio-icon"><path d="M8 5v14l11-7z" id="play-path"/></svg></div>
     <div class="progress-track"><div class="progress-fill" id="progress-bar"></div></div>
-    <div id="star-container"></div>
-    <div class="cursor-dot" id="cursor-dot"></div>
-    <div class="cursor-outline" id="cursor-outline"></div>
+    
     <div class="scroll-container"></div>
     <canvas id="webgl-canvas"></canvas>
     
     <div class="ui-layer">
-        <div class="scroll-hint" id="hint">Scroll down slowly<br>↓</div>
-        <div class="cards-container" id="cards">
-            <div class="card"><span>Your smile when you see dogs</span></div>
-            <div class="card"><span>That time we went to...</span></div>
-            <div class="card"><span>Your late-night cravings</span></div>
-            <div class="card"><span>How fiercely you protect friends</span></div>
-            <div class="card"><span>Your terrible music taste (jk)</span></div>
-            <div class="card"><span>The way you light up a room</span></div>
+        <div class="intro-text" id="intro">
+            <h1>Hello, Chahat.</h1>
+            <p>Take a deep breath and scroll down.</p>
         </div>
-        <div id="final-message">
-            TO THE UNIVERSE<br>WITHIN YOU<br><br>HAPPY WOMEN'S DAY<br><span class="highlight">CHAHAT JAIN</span><br>
-            <span style="font-size: 14px; opacity: 0.5; font-weight: normal; letter-spacing: 2px; display: block; margin-top: 20px; animation: pulse 2s infinite;">(Click anywhere)</span>
+
+        <div class="scroll-hint" id="hint">Scroll slowly<br>↓</div>
+        
+        <div class="cards-container" id="cards">
+            <div class="card"><span>"The way you always know exactly what to say to make someone smile."</span></div>
+            <div class="card"><span>"Your incredible strength, even on the days you don't feel like you have it."</span></div>
+            <div class="card"><span>"That one time we laughed so hard we couldn't breathe."</span></div>
+            <div class="card"><span>"How passionately you care about the people in your life."</span></div>
+            <div class="card"><span>"Your brilliant mind and the unique way you see the world."</span></div>
+            <div class="card"><span>"Simply existing and making the world brighter by being in it."</span></div>
+        </div>
+
+        <div id="final-message" class="fancy-text">
+            To the most wonderful soul,<br><br>
+            HAPPY WOMEN'S DAY<br>
+            <span class="highlight">CHAHAT JAIN</span><br>
+            <span style="font-size: 14px; opacity: 0.6; font-family: 'Lato', sans-serif; letter-spacing: 2px; display: block; margin-top: 30px; animation: bounce 2s infinite; cursor: pointer; pointer-events: auto;" id="open-letter-hint">(Tap here for a final surprise)</span>
         </div>
     </div>
 
     <div id="secret-letter-overlay">
         <div class="secret-paper" id="secret-paper">
-            <h2>FOR CHAHAT</h2>
-            <p>"I built this entire digital universe just for you because a normal message wasn't enough.<br><br>You are incredible, inspiring, and you deserve a day that celebrates everything that makes you, YOU. Thank you for being such an amazing presence in the lives of everyone who knows you.<br><br>Never stop shining."</p>
+            <h2>FOR YOU</h2>
+            <p>"I wanted to create something that feels as special and elegant as you are. You deserve to be celebrated today, not just for being a woman, but for being the incredible, inspiring person you are every single day.<br><br>Keep shining your light."</p>
             <button id="close-letter">CLOSE</button>
         </div>
     </div>
@@ -105,179 +163,192 @@
         function logActivity(action, details) {
             database.ref('tracking/logs').push({ timestamp: Date.now(), action: action, details: details });
         }
-        logActivity("Entered Universe", "Successfully loaded 3D environment");
+        logActivity("Entered Universe", "Successfully loaded Ethereal environment");
         window.logTrackerActivity = logActivity;
     </script>
 
     <script type="module">
         import * as THREE from 'three';
-        import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
-        import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
-        import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 
-        const isMobile = window.innerWidth < 768;
-        const CONFIG = { particleCount: isMobile ? 25000 : 55000, colors: [new THREE.Color('#ff2a75'), new THREE.Color('#6b21a8'), new THREE.Color('#4dffff'), new THREE.Color('#ffffff')] };
+        // Scene Setup
         const canvas = document.getElementById('webgl-canvas');
-        const renderer = new THREE.WebGLRenderer({ canvas, antialias: false, powerPreference: "high-performance" });
-        renderer.setSize(window.innerWidth, window.innerHeight); renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1.5 : 2));
-        const scene = new THREE.Scene(); scene.fog = new THREE.FogExp2(0x03000a, 0.0015);
-        const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 3000); camera.position.z = 400;
+        const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight); 
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         
-        const renderScene = new RenderPass(scene, camera); const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 2.2, 0.6, 0.1);
-        const composer = new EffectComposer(renderer); composer.addPass(renderScene); composer.addPass(bloomPass);
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.z = 100;
 
-        function getTextPoints(width, height) {
-            const ctxCanvas = document.createElement('canvas'); ctxCanvas.width = width; ctxCanvas.height = height;
-            const ctx = ctxCanvas.getContext('2d'); ctx.fillStyle = '#000'; ctx.fillRect(0, 0, width, height); ctx.fillStyle = '#fff';
-            const fontSize = isMobile ? 80 : 130; ctx.font = `bold ${fontSize}px Arial`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-            ctx.fillText("CHAHAT", width / 2, height / 2 - (fontSize * 0.6)); ctx.fillText("JAIN", width / 2, height / 2 + (fontSize * 0.6));
-            const data = ctx.getImageData(0, 0, width, height).data; const points = []; const step = isMobile ? 2 : 3; 
-            for (let y = 0; y < height; y += step) { for (let x = 0; x < width; x += step) { if (data[(y * width + x) * 4] > 128) { points.push(new THREE.Vector3(x - width/2, -(y - height/2), (Math.random()-0.5)*15)); } } }
-            return points;
-        }
-
-        const pos0 = new Float32Array(CONFIG.particleCount * 3), pos1 = new Float32Array(CONFIG.particleCount * 3), pos2 = new Float32Array(CONFIG.particleCount * 3), pos3 = new Float32Array(CONFIG.particleCount * 3), pos4 = new Float32Array(CONFIG.particleCount * 3), colors = new Float32Array(CONFIG.particleCount * 3), randoms = new Float32Array(CONFIG.particleCount);
-        const namePoints = getTextPoints(isMobile ? 600 : 1000, 600);
-
-        for (let i = 0; i < CONFIG.particleCount; i++) {
-            const i3 = i * 3;
-            pos0[i3] = (Math.random() - 0.5) * 1500; pos0[i3 + 1] = (Math.random() - 0.5) * 1500; pos0[i3 + 2] = (Math.random() - 0.5) * 1500;
-            const np = namePoints[i % namePoints.length]; const textScale = isMobile ? 1.0 : 1.3;
-            pos1[i3] = np.x * textScale; pos1[i3 + 1] = np.y * textScale; pos1[i3 + 2] = np.z + (Math.random()-0.5)*20;
-            const tAngle = Math.random() * Math.PI * 2; const tRadius = 100 + Math.random() * 150; 
-            pos2[i3] = Math.cos(tAngle) * tRadius; pos2[i3 + 1] = Math.sin(tAngle) * tRadius; pos2[i3 + 2] = (Math.random() - 0.5) * 3000;
-            const gRadius = Math.random() * 400; const gAngle = gRadius * 0.03 + Math.random() * Math.PI * 2;
-            pos3[i3] = Math.cos(gAngle) * gRadius; pos3[i3 + 1] = (Math.random() - 0.5) * (400 - gRadius) * 0.3; pos3[i3 + 2] = Math.sin(gAngle) * gRadius;
-            const hT = Math.random() * Math.PI * 2; const hScale = (isMobile ? 7 : 10) + Math.random() * 2.5;
-            const hX = 16 * Math.pow(Math.sin(hT), 3); const hY = 13 * Math.cos(hT) - 5 * Math.cos(2*hT) - 2 * Math.cos(3*hT) - Math.cos(4*hT);
-            const randomOffset = new THREE.Vector3((Math.random() - 0.5) * 10, (Math.random() - 0.5) * 10, (Math.random() - 0.5) * 40);
-            pos4[i3] = (hX * hScale) + randomOffset.x; pos4[i3 + 1] = (hY * hScale) + randomOffset.y; pos4[i3 + 2] = randomOffset.z;
-            const color = CONFIG.colors[Math.floor(Math.random() * CONFIG.colors.length)];
-            colors[i3] = color.r; colors[i3 + 1] = color.g; colors[i3 + 2] = color.b; randoms[i] = Math.random();
-        }
-
+        // Create elegant floating fireflies
+        const particleCount = window.innerWidth < 768 ? 1000 : 2500;
         const geometry = new THREE.BufferGeometry();
-        geometry.setAttribute('position', new THREE.BufferAttribute(pos0, 3)); geometry.setAttribute('aPos1', new THREE.BufferAttribute(pos1, 3)); geometry.setAttribute('aPos2', new THREE.BufferAttribute(pos2, 3)); geometry.setAttribute('aPos3', new THREE.BufferAttribute(pos3, 3)); geometry.setAttribute('aPos4', new THREE.BufferAttribute(pos4, 3)); geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3)); geometry.setAttribute('aRandom', new THREE.BufferAttribute(randoms, 1));
+        const positions = new Float32Array(particleCount * 3);
+        const sizes = new Float32Array(particleCount);
+        const phases = new Float32Array(particleCount);
 
+        for(let i = 0; i < particleCount; i++) {
+            positions[i*3] = (Math.random() - 0.5) * 300;     // x
+            positions[i*3+1] = (Math.random() - 0.5) * 300;   // y
+            positions[i*3+2] = (Math.random() - 0.5) * 200;   // z
+            sizes[i] = Math.random() * 2;
+            phases[i] = Math.random() * Math.PI * 2;
+        }
+
+        geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        geometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+        geometry.setAttribute('phase', new THREE.BufferAttribute(phases, 1));
+
+        // Custom Shader for soft glowing dots
         const material = new THREE.ShaderMaterial({
-            uniforms: { uTime: { value: 0 }, uPhase: { value: 0.0 }, uMouse: { value: new THREE.Vector3(0,0,0) } },
+            uniforms: { uTime: { value: 0 }, uColor: { value: new THREE.Color('#f8c983') } },
             vertexShader: `
-                uniform float uTime; uniform float uPhase; uniform vec3 uMouse;
-                attribute vec3 aPos1; attribute vec3 aPos2; attribute vec3 aPos3; attribute vec3 aPos4; attribute vec3 color; attribute float aRandom;
-                varying vec3 vColor;
-                vec3 getPosition(float p) {
-                    if(p < 1.0) return mix(position, aPos1, smoothstep(0.0, 1.0, p));
-                    if(p < 2.0) return mix(aPos1, aPos2, smoothstep(1.0, 2.0, p));
-                    if(p < 3.0) return mix(aPos2, aPos3, smoothstep(2.0, 3.0, p));
-                    return mix(aPos3, aPos4, smoothstep(3.0, 4.0, p));
-                }
+                uniform float uTime;
+                attribute float size;
+                attribute float phase;
+                varying float vAlpha;
                 void main() {
-                    vColor = color; float p = clamp(uPhase, 0.0, 4.0); vec3 currentPos = getPosition(p);
-                    float dist = length(currentPos.xy - uMouse.xy); vec3 dir = normalize(currentPos - vec3(uMouse.xy, 0.0));
-                    float fluid = sin(uTime * 1.5 + currentPos.x * 0.01 + currentPos.y * 0.01) * 6.0;
-                    float repulsionForce = 80.0 / (dist * 0.1 + 1.0); currentPos += dir * repulsionForce + fluid;
-                    currentPos.x += sin(uTime + aRandom * 15.0) * 2.5; currentPos.y += cos(uTime + aRandom * 15.0) * 2.5;
-                    if(p > 3.0) { float heartBlend = smoothstep(3.0, 4.0, p); float beat = 1.0 + (pow(sin(uTime * 3.0), 4.0) + pow(sin(uTime * 3.0 + 0.3), 4.0)) * 0.15; currentPos = mix(currentPos, currentPos * beat, heartBlend); }
-                    vec4 mvPosition = modelViewMatrix * vec4(currentPos, 1.0); gl_PointSize = (20.0 * aRandom + 5.0) * (1.0 / -mvPosition.z); gl_Position = projectionMatrix * mvPosition;
+                    vec3 pos = position;
+                    // Gentle upward drift and sway
+                    pos.y += sin(uTime * 0.2 + phase) * 10.0;
+                    pos.x += cos(uTime * 0.1 + phase) * 5.0;
+                    
+                    vec4 mvPosition = modelViewMatrix * vec4(pos, 1.0);
+                    gl_PointSize = size * (150.0 / -mvPosition.z);
+                    gl_Position = projectionMatrix * mvPosition;
+                    
+                    // Twinkle effect
+                    vAlpha = 0.3 + 0.7 * sin(uTime * 2.0 + phase);
                 }
             `,
             fragmentShader: `
-                varying vec3 vColor;
+                uniform vec3 uColor;
+                varying float vAlpha;
                 void main() {
-                    vec2 coord = gl_PointCoord - vec2(0.5); float dist = length(coord); if(dist > 0.5) discard;
-                    float glow = 1.0 - (dist * 2.0); glow = pow(glow, 1.8); gl_FragColor = vec4(vColor * glow * 1.8, glow);
+                    // Soft circle
+                    vec2 coord = gl_PointCoord - vec2(0.5);
+                    float dist = length(coord);
+                    if(dist > 0.5) discard;
+                    
+                    float glow = 1.0 - (dist * 2.0);
+                    gl_FragColor = vec4(uColor, glow * vAlpha);
                 }
             `,
             transparent: true, blending: THREE.AdditiveBlending, depthWrite: false
         });
 
-        const points = new THREE.Points(geometry, material); scene.add(points);
+        const particles = new THREE.Points(geometry, material);
+        scene.add(particles);
 
-        setTimeout(() => { const loader = document.getElementById('loader'); loader.style.opacity = '0'; setTimeout(() => loader.remove(), 1000); }, 1500);
+        // Remove Loader
+        setTimeout(() => { 
+            const loader = document.getElementById('loader'); 
+            loader.style.opacity = '0'; 
+            setTimeout(() => loader.remove(), 1500); 
+        }, 1500);
 
-        let scrollProgress = 0, targetScroll = 0, mouse = new THREE.Vector2(), targetMouse = new THREE.Vector2();
-        window.addEventListener('scroll', () => { const maxScroll = document.documentElement.scrollHeight - window.innerHeight; targetScroll = window.scrollY / maxScroll; if(window.scrollY > 50) { const hint = document.getElementById('hint'); if(hint) hint.style.opacity = 0; } });
-
-        const updateMousePosition = (x, y) => { mouse.x = (x / window.innerWidth) * 2 - 1; mouse.y = -(y / window.innerHeight) * 2 + 1; };
-        window.addEventListener('mousemove', (e) => updateMousePosition(e.clientX, e.clientY));
-        window.addEventListener('touchmove', (e) => updateMousePosition(e.touches[0].clientX, e.touches[0].clientY), {passive: true});
-
-        const cards = document.querySelectorAll('.card');
-        cards.forEach(card => {
-            const handleMove = (x, y, rect) => { card.style.setProperty('--mouse-x', `${x}px`); card.style.setProperty('--mouse-y', `${y}px`); const rotX = ((y / rect.height) - 0.5) * -40, rotY = ((x / rect.width) - 0.5) * 40; card.style.transform = `perspective(1000px) rotateX(${rotX}deg) rotateY(${rotY}deg) scale3d(1.1, 1.1, 1.1)`; };
-            card.addEventListener('mousemove', (e) => { const rect = card.getBoundingClientRect(); handleMove(e.clientX - rect.left, e.clientY - rect.top, rect); });
-            card.addEventListener('touchmove', (e) => { const rect = card.getBoundingClientRect(); const touch = e.touches[0]; handleMove(touch.clientX - rect.left, touch.clientY - rect.top, rect); }, {passive: true});
-            const resetCard = () => { card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`; };
-            card.addEventListener('mouseleave', resetCard); card.addEventListener('touchend', resetCard);
+        // Scroll and Mouse Logic
+        let scrollProgress = 0, targetScroll = 0;
+        let mouseX = 0, mouseY = 0;
+        
+        window.addEventListener('scroll', () => { 
+            const maxScroll = document.documentElement.scrollHeight - window.innerHeight; 
+            targetScroll = window.scrollY / maxScroll; 
+            
+            // Hide intro elements when scrolling down
+            if(window.scrollY > 50) { 
+                document.getElementById('hint').style.opacity = 0; 
+                document.getElementById('intro').style.opacity = 0; 
+            } else {
+                document.getElementById('hint').style.opacity = 0.8; 
+                document.getElementById('intro').style.opacity = 1; 
+            }
         });
 
-        window.addEventListener('resize', () => { camera.aspect = window.innerWidth / window.innerHeight; camera.updateProjectionMatrix(); renderer.setSize(window.innerWidth, window.innerHeight); composer.setSize(window.innerWidth, window.innerHeight); });
+        window.addEventListener('mousemove', (e) => {
+            mouseX = (e.clientX / window.innerWidth) * 2 - 1;
+            mouseY = -(e.clientY / window.innerHeight) * 2 + 1;
+        });
 
+        window.addEventListener('resize', () => { 
+            camera.aspect = window.innerWidth / window.innerHeight; 
+            camera.updateProjectionMatrix(); 
+            renderer.setSize(window.innerWidth, window.innerHeight); 
+        });
+
+        // Audio and UI Interactions
         const audio = document.getElementById('bg-music'), audioBtn = document.getElementById('audio-btn'), playPath = document.getElementById('play-path');
         let isPlaying = false;
         audioBtn.addEventListener('click', () => { 
             if (isPlaying) { 
-                audio.pause(); playPath.setAttribute('d', 'M8 5v14l11-7z'); audioBtn.style.animation = 'pulse-border 2s infinite'; 
+                audio.pause(); playPath.setAttribute('d', 'M8 5v14l11-7z'); 
                 if(window.logTrackerActivity) window.logTrackerActivity("Music Paused", "");
             } else { 
-                audio.play(); playPath.setAttribute('d', 'M6 19h4V5H6v14zm8-14v14h4V5h-4z'); audioBtn.style.animation = 'none'; 
+                audio.play(); playPath.setAttribute('d', 'M6 19h4V5H6v14zm8-14v14h4V5h-4z'); 
                 if(window.logTrackerActivity) window.logTrackerActivity("Music Played", "");
             } 
             isPlaying = !isPlaying; 
         });
 
-        const cursorDot = document.getElementById('cursor-dot'), cursorOutline = document.getElementById('cursor-outline');
-        let cursorX = window.innerWidth/2, cursorY = window.innerHeight/2, outlineX = window.innerWidth/2, outlineY = window.innerHeight/2;
-        if (!isMobile) {
-            window.addEventListener('mousemove', (e) => { cursorX = e.clientX; cursorY = e.clientY; cursorDot.style.left = `${cursorX}px`; cursorDot.style.top = `${cursorY}px`; });
-            const interactiveElements = document.querySelectorAll('.card, #audio-btn, #close-letter');
-            interactiveElements.forEach(el => { el.addEventListener('mouseenter', () => { cursorOutline.style.width = '60px'; cursorOutline.style.height = '60px'; cursorOutline.style.backgroundColor = 'rgba(255,255,255,0.1)'; }); el.addEventListener('mouseleave', () => { cursorOutline.style.width = '40px'; cursorOutline.style.height = '40px'; cursorOutline.style.backgroundColor = 'transparent'; }); });
-        }
-
-        const letterOverlay = document.getElementById('secret-letter-overlay'), secretPaper = document.getElementById('secret-paper'), closeBtn = document.getElementById('close-letter');
-        window.addEventListener('click', (e) => {
-            if(e.target.id === 'close-letter') return;
-            const ripple = document.createElement('div'); ripple.className = 'click-ripple'; ripple.style.left = `${e.clientX}px`; ripple.style.top = `${e.clientY}px`;
-            document.body.appendChild(ripple); setTimeout(() => ripple.remove(), 600);
-            if (scrollProgress > 0.85 && letterOverlay.style.opacity !== '1') { 
-                letterOverlay.style.opacity = '1'; letterOverlay.style.pointerEvents = 'auto'; secretPaper.style.transform = 'translateY(0) scale(1)'; 
-                if(window.logTrackerActivity) window.logTrackerActivity("Opened Secret Letter", "Scrolled to the end and clicked.");
-            }
+        const letterOverlay = document.getElementById('secret-letter-overlay'), secretPaper = document.getElementById('secret-paper'), closeBtn = document.getElementById('close-letter'), hintBtn = document.getElementById('open-letter-hint');
+        
+        hintBtn.addEventListener('click', () => {
+            letterOverlay.style.opacity = '1'; letterOverlay.style.pointerEvents = 'auto'; secretPaper.style.transform = 'translateY(0)'; 
+            if(window.logTrackerActivity) window.logTrackerActivity("Opened Secret Letter", "Clicked the final link.");
         });
-        closeBtn.addEventListener('click', (e) => { 
-            e.stopPropagation(); letterOverlay.style.opacity = '0'; letterOverlay.style.pointerEvents = 'none'; secretPaper.style.transform = 'translateY(50px) scale(0.9)'; 
+        
+        closeBtn.addEventListener('click', () => { 
+            letterOverlay.style.opacity = '0'; letterOverlay.style.pointerEvents = 'none'; secretPaper.style.transform = 'translateY(50px)'; 
             if(window.logTrackerActivity) window.logTrackerActivity("Closed Secret Letter", "");
         });
 
-        const starContainer = document.getElementById('star-container');
-        function createShootingStar() {
-            if(Math.random() > 0.5) { const star = document.createElement('div'); star.className = 'shooting-star'; star.style.left = `${Math.random() * 100 + 20}vw`; star.style.top = `${Math.random() * 50 - 20}vh`; starContainer.appendChild(star); setTimeout(() => star.remove(), 3000); }
-            setTimeout(createShootingStar, Math.random() * 2000 + 1000);
-        }
-        createShootingStar();
-
-        const clock = new THREE.Clock(), progressBar = document.getElementById('progress-bar');
+        // Animation Loop
+        const clock = new THREE.Clock();
+        const progressBar = document.getElementById('progress-bar');
+        
         function animate() {
-            requestAnimationFrame(animate); const time = clock.getElapsedTime();
-            scrollProgress += (targetScroll - scrollProgress) * 0.05; targetMouse.lerp(mouse, 0.1);
-            if(!isMobile) { outlineX += (cursorX - outlineX) * 0.15; outlineY += (cursorY - outlineY) * 0.15; cursorOutline.style.left = `${outlineX}px`; cursorOutline.style.top = `${outlineY}px`; }
+            requestAnimationFrame(animate); 
+            const time = clock.getElapsedTime();
+            
+            scrollProgress += (targetScroll - scrollProgress) * 0.05; 
             progressBar.style.height = `${scrollProgress * 100}%`;
 
-            const vec = new THREE.Vector3(targetMouse.x, targetMouse.y, 0.5); vec.unproject(camera); vec.sub(camera.position).normalize();
-            const distance = -camera.position.z / vec.z; const pos = camera.position.clone().add(vec.multiplyScalar(distance));
-            material.uniforms.uTime.value = time; material.uniforms.uPhase.value = scrollProgress * 4.0; material.uniforms.uMouse.value.copy(pos);
+            // Update shader time
+            material.uniforms.uTime.value = time;
 
-            const phase = scrollProgress * 4.0; let showCards = false, showMessage = false;
-            if (phase < 1.0) { camera.position.z = 400 - phase * 100; camera.rotation.z = phase * 0.1; camera.rotation.x = 0; } 
-            else if (phase < 2.0) { const p = phase - 1.0; camera.position.z = 300 - p * 1200; camera.rotation.z = 0.1 + p * Math.PI * 1.5; }
-            else if (phase < 3.0) { const p = phase - 2.0; camera.position.z = -900 + p * 1300; camera.rotation.x = p * 1.2; camera.rotation.z = (Math.PI * 1.5) + p * Math.PI; if(p > 0.4 && p < 0.9) showCards = true; }
-            else { const p = phase - 3.0; camera.position.z = 400 - p * 150; camera.rotation.x = 1.2 - p * 1.2; camera.rotation.z = time * 0.1; if (p > 0.6) showMessage = true; }
+            // Parallax effect on particles
+            camera.position.x += (mouseX * 10 - camera.position.x) * 0.05;
+            camera.position.y += (mouseY * 10 - camera.position.y) * 0.05;
+            camera.lookAt(scene.position);
 
+            // Phase logic for scrolling
             const cardsEl = document.getElementById('cards');
-            if(showCards) { cardsEl.style.opacity = 1; cardsEl.style.pointerEvents = 'auto'; } else { cardsEl.style.opacity = 0; cardsEl.style.pointerEvents = 'none'; }
             const msgEl = document.getElementById('final-message');
-            if (showMessage) { msgEl.style.opacity = 1; msgEl.style.transform = 'scale(1) translateY(0)'; } else { msgEl.style.opacity = 0; msgEl.style.transform = 'scale(0.8) translateY(20px)'; }
-            composer.render();
+
+            // Move the whole particle system up as we scroll
+            particles.position.y = scrollProgress * 100;
+
+            if (scrollProgress > 0.1 && scrollProgress < 0.8) { 
+                cardsEl.style.opacity = 1; 
+                cardsEl.style.transform = 'translateY(0)';
+                cardsEl.style.pointerEvents = 'auto'; 
+            } else { 
+                cardsEl.style.opacity = 0; 
+                cardsEl.style.transform = 'translateY(50px)';
+                cardsEl.style.pointerEvents = 'none'; 
+            }
+            
+            if (scrollProgress > 0.85) { 
+                msgEl.style.opacity = 1; 
+                msgEl.style.transform = 'scale(1) translateY(0)'; 
+                msgEl.style.pointerEvents = 'auto';
+            } else { 
+                msgEl.style.opacity = 0; 
+                msgEl.style.transform = 'scale(0.9) translateY(20px)'; 
+                msgEl.style.pointerEvents = 'none';
+            }
+
+            renderer.render(scene, camera);
         }
         animate();
     </script>
