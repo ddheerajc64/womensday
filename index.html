@@ -6,15 +6,11 @@
     <title>A Universe For Chahat - Happy Women's Day</title>
 
     <script>
-        if (sessionStorage.getItem("universe_access") !== "granted") {
-            window.location.replace("login.html");
-        } else {
-            sessionStorage.removeItem("universe_access");
-        }
+        if (sessionStorage.getItem("universe_access") !== "granted") { window.location.replace("login.html"); } 
+        else { sessionStorage.removeItem("universe_access"); }
     </script>
 
     <style>
-        /* Exact same styles as before */
         :root { --primary: #ff2a75; --secondary: #6b21a8; --accent: #4dffff; --bg: #03000a; }
         body, html { margin: 0; padding: 0; background-color: var(--bg); color: white; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; overflow-x: hidden; overscroll-behavior: none; cursor: none; }
         #loader { position: fixed; inset: 0; background: var(--bg); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 1s ease; }
@@ -54,6 +50,8 @@
         #close-letter:hover { background: var(--primary); box-shadow: 0 0 20px var(--primary); }
         @media (max-width: 768px) { body { cursor: auto; } .cursor-dot, .cursor-outline { display: none; } .card { width: 130px; height: 180px; font-size: 14px; cursor: auto; } .cards-container { gap: 15px; } .progress-track { right: 10px; height: 30vh; } #audio-btn { cursor: auto; } .secret-paper p { font-size: 16px; } }
     </style>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     <script type="importmap"> { "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js", "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/" } } </script>
 </head>
 <body>
@@ -91,30 +89,23 @@
         </div>
     </div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, set, push, onDisconnect } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
-
+    <script>
         const firebaseConfig = {
             apiKey: "AIzaSyBDfs0BvDVWG0-p3_D0VI_9GA0gkRxg4tg", authDomain: "login-page-64.firebaseapp.com", projectId: "login-page-64",
             storageBucket: "login-page-64.firebasestorage.app", messagingSenderId: "356749175989", appId: "1:356749175989:web:61f3e3a95f7014ae9ce2fc", measurementId: "G-X1Q4QLER72",
             databaseURL: "https://login-page-64-default-rtdb.firebaseio.com"
         };
-        const app = initializeApp(firebaseConfig);
-        const database = getDatabase(app);
+        if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
+        const database = firebase.database();
 
-        // Make user "Online" and handle unexpected exits
-        const liveRef = ref(database, 'tracking/live/isOnline');
-        set(liveRef, true);
-        onDisconnect(liveRef).set(false); // If she closes the tab, it marks offline
+        const liveRef = database.ref('tracking/live/isOnline');
+        liveRef.set(true);
+        liveRef.onDisconnect().set(false);
         
         function logActivity(action, details) {
-            push(ref(database, 'tracking/logs'), { timestamp: Date.now(), action: action, details: details });
+            database.ref('tracking/logs').push({ timestamp: Date.now(), action: action, details: details });
         }
-        
         logActivity("Entered Universe", "Successfully loaded 3D environment");
-
-        // Make functions accessible to the ThreeJS module below
         window.logTrackerActivity = logActivity;
     </script>
 
