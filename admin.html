@@ -4,67 +4,154 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Universe Command Center</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+
     <style>
-        :root { --neon-blue: #00f3ff; --neon-pink: #ff2a75; --bg: #070709; --panel: rgba(20, 20, 30, 0.8); }
-        body { background-color: var(--bg); color: #fff; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 20px; display: flex; justify-content: center; min-height: 100vh; background-image: radial-gradient(circle at 50% 0%, #1a1a2e 0%, var(--bg) 60%); }
-        .dashboard { width: 100%; max-width: 1000px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-        .header { grid-column: 1 / -1; text-align: center; margin-bottom: 20px; border-bottom: 1px solid rgba(0, 243, 255, 0.2); padding-bottom: 20px; }
-        .header h1 { margin: 0; color: var(--neon-blue); letter-spacing: 5px; font-weight: 300; text-transform: uppercase; }
-        .header p { margin: 5px 0 0 0; color: #888; font-size: 14px; letter-spacing: 2px; }
-        .card { background: var(--panel); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 15px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); backdrop-filter: blur(10px); display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
-        .card.wide { grid-column: 1 / -1; align-items: flex-start; text-align: left; height: 300px; justify-content: flex-start; overflow: hidden; }
-        .card h3 { margin: 0 0 10px 0; font-size: 12px; color: #aaa; text-transform: uppercase; letter-spacing: 2px; width: 100%; }
-        .value { font-size: 40px; font-weight: bold; color: white; text-shadow: 0 0 15px var(--neon-blue); }
-        .sub-value { font-size: 14px; color: var(--neon-pink); margin-top: 5px; letter-spacing: 1px; }
-        .status-dot { width: 12px; height: 12px; background-color: #ff4d4d; border-radius: 50%; display: inline-block; margin-right: 8px; box-shadow: 0 0 10px #ff4d4d; transition: all 0.3s ease; }
-        .status-dot.online { background-color: #00ffcc; box-shadow: 0 0 10px #00ffcc; animation: pulse 1.5s infinite; }
-        .log-container { width: 100%; height: 100%; overflow-y: auto; padding-right: 10px; }
-        .log-container::-webkit-scrollbar { width: 5px; }
-        .log-container::-webkit-scrollbar-thumb { background: rgba(0, 243, 255, 0.3); border-radius: 5px; }
-        table { width: 100%; border-collapse: collapse; font-size: 14px; }
-        th { text-align: left; padding: 10px; color: #888; border-bottom: 1px solid rgba(255,255,255,0.1); position: sticky; top: 0; background: var(--panel); z-index: 10; }
-        td { padding: 12px 10px; border-bottom: 1px solid rgba(255,255,255,0.05); color: #ddd; }
-        .log-time { color: #888; font-size: 12px; white-space: nowrap; }
-        .log-action { color: var(--neon-blue); font-weight: bold; }
-        @keyframes pulse { 0% { opacity: 0.6; } 50% { opacity: 1; transform: scale(1.1); } 100% { opacity: 0.6; } }
-        @media (max-width: 768px) { .dashboard { grid-template-columns: 1fr; } }
+        :root { 
+            --bg-top: #1a0b2e; 
+            --bg-mid: #4b1d52; 
+            --bg-bottom: #e55d87;
+            --gold: #f8c983;
+            --text-main: #fcfcfc;
+            --panel: rgba(255, 255, 255, 0.05);
+        }
+
+        body { 
+            background: linear-gradient(135deg, var(--bg-top), var(--bg-mid), var(--bg-bottom));
+            background-attachment: fixed;
+            color: var(--text-main); 
+            font-family: 'Lato', sans-serif; 
+            margin: 0; padding: 30px 20px; 
+            display: flex; justify-content: center; min-height: 100vh; 
+        }
+
+        .dashboard { 
+            width: 100%; max-width: 1000px; 
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; 
+        }
+
+        .header { 
+            grid-column: 1 / -1; text-align: center; margin-bottom: 10px; 
+            border-bottom: 1px solid rgba(248, 201, 131, 0.2); padding-bottom: 25px; 
+        }
+        
+        .header h1 { 
+            margin: 0; color: var(--gold); letter-spacing: 4px; 
+            font-family: 'Playfair Display', serif; font-weight: 400; font-size: 32px;
+        }
+        
+        .header p { margin: 10px 0 0 0; color: rgba(255,255,255,0.7); font-size: 13px; letter-spacing: 3px; text-transform: uppercase; }
+        
+        /* Glassmorphism Cards */
+        .card { 
+            background: var(--panel); border: 1px solid rgba(255, 255, 255, 0.15); 
+            border-radius: 20px; padding: 30px; 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2), inset 0 0 20px rgba(255,255,255,0.02); 
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; 
+            transition: transform 0.3s ease;
+        }
+        .card:hover { transform: translateY(-5px); border-color: rgba(248, 201, 131, 0.4); }
+        .card.wide { grid-column: 1 / -1; align-items: flex-start; text-align: left; height: 350px; justify-content: flex-start; overflow: hidden; padding: 25px 30px; }
+        
+        .card h3 { 
+            margin: 0 0 15px 0; font-size: 11px; color: rgba(255,255,255,0.6); 
+            text-transform: uppercase; letter-spacing: 3px; width: 100%; font-weight: 400;
+        }
+        
+        .value { 
+            font-size: 45px; font-weight: 400; color: white; 
+            font-family: 'Playfair Display', serif;
+            text-shadow: 0 2px 15px rgba(0,0,0,0.2); 
+        }
+        
+        .sub-value { font-size: 13px; color: var(--gold); margin-top: 8px; letter-spacing: 1px; font-style: italic; }
+        
+        /* Status Dot */
+        .status-dot { 
+            width: 10px; height: 10px; background-color: rgba(255,255,255,0.3); 
+            border-radius: 50%; display: inline-block; margin-right: 10px; 
+            transition: all 0.4s ease; 
+        }
+        .status-dot.online { 
+            background-color: var(--gold); 
+            box-shadow: 0 0 15px var(--gold); 
+            animation: pulse 2s infinite; 
+        }
+        
+        /* Activity Log Table */
+        .log-container { width: 100%; height: 100%; overflow-y: auto; padding-right: 15px; }
+        .log-container::-webkit-scrollbar { width: 4px; }
+        .log-container::-webkit-scrollbar-thumb { background: rgba(248, 201, 131, 0.4); border-radius: 4px; }
+        .log-container::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); }
+        
+        table { width: 100%; border-collapse: collapse; font-size: 14px; font-weight: 300; }
+        th { text-align: left; padding: 12px 10px; color: var(--gold); border-bottom: 1px solid rgba(255,255,255,0.1); position: sticky; top: 0; background: rgba(30, 15, 45, 0.95); backdrop-filter: blur(10px); z-index: 10; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; font-weight: 400; }
+        td { padding: 15px 10px; border-bottom: 1px solid rgba(255,255,255,0.05); color: rgba(255,255,255,0.85); line-height: 1.5; }
+        .log-time { color: rgba(255,255,255,0.5); font-size: 12px; white-space: nowrap; }
+        .log-action { color: white; font-weight: 400; font-family: 'Playfair Display', serif; font-size: 16px; font-style: italic; }
+        
+        @keyframes pulse { 0% { opacity: 0.5; box-shadow: 0 0 5px var(--gold); } 50% { opacity: 1; box-shadow: 0 0 20px var(--gold); transform: scale(1.1); } 100% { opacity: 0.5; box-shadow: 0 0 5px var(--gold); } }
+        
+        @media (max-width: 768px) { 
+            .dashboard { grid-template-columns: 1fr; gap: 20px; } 
+            .card.wide { height: 400px; }
+            .header h1 { font-size: 26px; }
+        }
     </style>
+
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 </head>
 <body>
+
     <div class="dashboard">
         <div class="header">
-            <h1>Command Center</h1>
+            <h1>Activity Dashboard</h1>
             <p><span class="status-dot" id="live-dot"></span><span id="live-text">OFFLINE</span></p>
         </div>
+
         <div class="card">
             <h3>Total Logins</h3>
             <div class="value" id="visit-count">0</div>
             <div class="sub-value">Lifetime visits</div>
         </div>
+
         <div class="card">
             <h3>Last Seen</h3>
-            <div class="value" style="font-size: 20px; margin-top: 10px;" id="last-time">--</div>
-            <div class="sub-value" id="last-date">Waiting...</div>
+            <div class="value" style="font-size: 24px; margin-top: 10px;" id="last-time">--</div>
+            <div class="sub-value" id="last-date">Waiting for connection...</div>
         </div>
+
         <div class="card">
-            <h3>Latest Device Info</h3>
-            <div class="value" style="font-size: 20px; margin-top: 10px;" id="device-os">--</div>
+            <h3>Latest Device</h3>
+            <div class="value" style="font-size: 24px; margin-top: 10px;" id="device-os">--</div>
             <div class="sub-value" id="device-browser">--</div>
         </div>
+
         <div class="card wide">
             <h3>Live Activity Log</h3>
             <div class="log-container">
                 <table id="log-table">
-                    <thead><tr><th>Time</th><th>Action</th><th>Details</th></tr></thead>
-                    <tbody id="log-body"></tbody>
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>Action</th>
+                            <th>Details</th>
+                        </tr>
+                    </thead>
+                    <tbody id="log-body">
+                        </tbody>
                 </table>
             </div>
         </div>
     </div>
 
     <script>
+        // Exact Firebase Config
         const firebaseConfig = {
             apiKey: "AIzaSyBDfs0BvDVWG0-p3_D0VI_9GA0gkRxg4tg",
             authDomain: "login-page-64.firebaseapp.com",
@@ -79,34 +166,57 @@
         if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
         const database = firebase.database();
 
+        // 1. Track Basic Stats
         database.ref('tracking/overview').on('value', (snapshot) => {
             const data = snapshot.val();
             if (data) {
                 document.getElementById("visit-count").innerText = data.totalVisits || 0;
+                
                 if (data.lastLoginFull) {
                     const dateObj = new Date(data.lastLoginFull);
                     document.getElementById("last-time").innerText = dateObj.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
                     document.getElementById("last-date").innerText = dateObj.toLocaleDateString();
                 }
+                
                 document.getElementById("device-os").innerText = data.lastOS || "Unknown OS";
                 document.getElementById("device-browser").innerText = data.lastBrowser || "Unknown Browser";
             }
         });
 
+        // 2. Track Live Status (Online/Offline)
         database.ref('tracking/live/isOnline').on('value', (snapshot) => {
             const isOnline = snapshot.val();
-            const dot = document.getElementById("live-dot"); const text = document.getElementById("live-text");
-            if (isOnline) { dot.classList.add("online"); text.innerText = "CHAHAT IS ONLINE"; text.style.color = "#00ffcc"; } 
-            else { dot.classList.remove("online"); text.innerText = "OFFLINE"; text.style.color = "#888"; }
+            const dot = document.getElementById("live-dot");
+            const text = document.getElementById("live-text");
+            
+            if (isOnline) {
+                dot.classList.add("online"); 
+                text.innerText = "CHAHAT IS ONLINE"; 
+                text.style.color = "var(--gold)"; 
+            } else {
+                dot.classList.remove("online"); 
+                text.innerText = "OFFLINE"; 
+                text.style.color = "rgba(255,255,255,0.5)"; 
+            }
         });
 
+        // 3. Track Activity Logs
         database.ref('tracking/logs').limitToLast(50).on('value', (snapshot) => {
-            const logBody = document.getElementById("log-body"); logBody.innerHTML = ""; 
-            const logs = []; snapshot.forEach((child) => { logs.push(child.val()); });
+            const logBody = document.getElementById("log-body");
+            logBody.innerHTML = ""; // Clear existing
+            
+            const logs = [];
+            snapshot.forEach((child) => { logs.push(child.val()); });
+            
+            // Reverse so newest is at the top
             logs.reverse().forEach(log => {
                 const tr = document.createElement("tr");
                 const timeStr = new Date(log.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'});
-                tr.innerHTML = `<td class="log-time">${timeStr}</td><td class="log-action">${log.action}</td><td>${log.details || ''}</td>`;
+                tr.innerHTML = `
+                    <td class="log-time">${timeStr}</td>
+                    <td class="log-action">${log.action}</td>
+                    <td>${log.details || ''}</td>
+                `;
                 logBody.appendChild(tr);
             });
         });
